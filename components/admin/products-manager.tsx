@@ -115,31 +115,33 @@ export function ProductsManager({ products, stores }: { products: Product[], sto
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Header Actions */}
-            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-                <div className="relative w-full sm:w-96 text-right">
-                    <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <div className="flex flex-col lg:flex-row gap-6 items-center justify-between">
+                <div className="relative w-full lg:w-[450px] group">
+                    <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 group-focus-within:text-primary transition-colors" />
                     <Input
-                        placeholder="البحث عن المنتجات..."
+                        placeholder="البحث عن المنتجات بالاسم أو الباركود..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="pr-10 h-11 bg-white border-0 shadow-sm ring-1 ring-gray-100 focus-visible:ring-primary/20 rounded-xl text-right"
+                        className="pr-12 h-14 bg-white/50 dark:bg-slate-800/50 border-0 shadow-premium glass dark:glass-dark ring-1 ring-slate-200/50 dark:ring-white/5 focus-visible:ring-primary/30 rounded-2xl text-right text-lg font-medium"
                     />
                 </div>
-                <div className="w-full sm:w-auto flex items-center gap-2">
-                    <Button variant="outline" size="icon" onClick={handleExport} className="h-11 w-11 rounded-xl shadow-sm border-gray-200" title="Backup All">
-                        <Download className="w-5 h-5" />
-                    </Button>
-                    <div className="relative">
-                        <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept=".json" onChange={handleImport} />
-                        <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl shadow-sm border-gray-200" title="Restore Backup">
-                            <Upload className="w-5 h-5" />
+                <div className="w-full lg:w-auto flex items-center gap-3">
+                    <div className="flex bg-white/50 dark:bg-slate-800/50 p-1.5 rounded-2xl shadow-premium border border-slate-100 dark:border-white/5 glass dark:glass-dark">
+                        <Button variant="ghost" size="icon" onClick={handleExport} className="h-11 w-11 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700" title="Backup All">
+                            <Download className="w-5 h-5" />
                         </Button>
+                        <div className="relative">
+                            <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept=".json" onChange={handleImport} />
+                            <Button variant="ghost" size="icon" className="h-11 w-11 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700" title="Restore Backup">
+                                <Upload className="w-5 h-5" />
+                            </Button>
+                        </div>
                     </div>
-                    <Button onClick={openAdd} className="gap-2 h-11 px-6 rounded-xl shadow-lg shadow-primary/20 font-bold w-full sm:w-auto">
-                        <Plus className="w-4 h-4" />
-                        <span>إضافة منتج</span>
+                    <Button onClick={openAdd} className="gap-3 h-14 px-8 rounded-2xl gradient-primary shadow-xl shadow-indigo-200 dark:shadow-none font-black text-lg w-full lg:w-auto active:scale-95 transition-all text-white">
+                        <Plus className="w-6 h-6" />
+                        <span>إضافة منتج جديد</span>
                     </Button>
                 </div>
             </div>
@@ -151,107 +153,115 @@ export function ProductsManager({ products, stores }: { products: Product[], sto
                 onOpenChange={setIsDialogOpen}
             />
 
-            {/* Content */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <Table>
-                    <TableHeader className="bg-gray-50/50">
-                        <TableRow className="hover:bg-transparent border-gray-100">
-                            <TableHead className="text-right h-12 font-bold text-gray-600">المنتج</TableHead>
-                            <TableHead className="text-right font-bold text-gray-600">المتاجر</TableHead>
-                            <TableHead className="text-center font-bold text-gray-600">المخزون الكلي</TableHead>
-                            <TableHead className="text-right font-bold text-gray-600">التكلفة</TableHead>
-                            <TableHead className="text-right font-bold text-gray-600">نطاق السعر</TableHead>
-                            <TableHead className="w-[100px]"></TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {filteredProducts.map((product) => {
-                            const isLowStock = product.total_stock < 5;
+            {/* Content Table */}
+            <div className="glass dark:glass-dark rounded-[2.5rem] shadow-premium border-0 overflow-hidden relative group/table">
+                <div className="overflow-x-auto scrollbar-hide">
+                    <Table className="min-w-[900px]">
+                        <TableHeader className="bg-slate-50/50 dark:bg-slate-800/30">
+                            <TableRow className="hover:bg-transparent border-slate-100 dark:border-white/5 h-16">
+                                <TableHead className="text-right px-8 font-black text-slate-500 uppercase tracking-widest text-[10px]">المنتج التفاصيل</TableHead>
+                                <TableHead className="text-right font-black text-slate-500 uppercase tracking-widest text-[10px]">المتاجر المتواجد بها</TableHead>
+                                <TableHead className="text-center font-black text-slate-500 uppercase tracking-widest text-[10px]">المخزون الكلي</TableHead>
+                                <TableHead className="text-right font-black text-slate-500 uppercase tracking-widest text-[10px]">سعر التكلفة</TableHead>
+                                <TableHead className="text-right font-black text-slate-500 uppercase tracking-widest text-[10px]">سعر البيع</TableHead>
+                                <TableHead className="w-[120px] px-8"></TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {filteredProducts.map((product) => {
+                                const isLowStock = product.total_stock < 5;
 
-                            return (
-                                <TableRow key={product.template_id} className="group hover:bg-gray-50/50 border-gray-100 transition-colors">
-                                    <TableCell className="font-medium py-3">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-12 h-12 rounded-xl bg-gray-100 border border-gray-200/50 flex items-center justify-center text-gray-400 overflow-hidden shrink-0">
-                                                {product.product_templates?.image_url ? (
-                                                    <img src={product.product_templates.image_url} alt={product.product_templates.name} className="w-full h-full object-cover" />
-                                                ) : (
-                                                    <Package className="w-5 h-5" />
-                                                )}
+                                return (
+                                    <TableRow key={product.template_id} className="group hover:bg-slate-50/50 dark:hover:bg-slate-800/30 border-slate-50 dark:border-white/5 transition-all h-20">
+                                        <TableCell className="px-8">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-14 h-14 rounded-2xl bg-white dark:bg-slate-700 shadow-sm border border-slate-100 dark:border-white/10 flex items-center justify-center text-slate-300 overflow-hidden shrink-0 group-hover:scale-105 transition-transform">
+                                                    {product.product_templates?.image_url ? (
+                                                        <img src={product.product_templates.image_url} alt={product.product_templates.name} className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <Package className="w-6 h-6" />
+                                                    )}
+                                                </div>
+                                                <div className="min-w-0 text-right">
+                                                    <div className="font-black text-slate-900 dark:text-white truncate text-lg">{product.product_templates?.name}</div>
+                                                    {product.product_templates?.barcode && (
+                                                        <div className="text-[10px] text-slate-400 font-black tracking-widest mt-1 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full inline-block">
+                                                            ID: {product.product_templates.barcode}
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
-                                            <div className="min-w-0 text-right">
-                                                <div className="font-bold text-gray-900 truncate">{product.product_templates?.name}</div>
-                                                {product.product_templates?.barcode && (
-                                                    <div className="text-[10px] text-muted-foreground font-mono bg-gray-100 px-1 rounded inline-block">
-                                                        {product.product_templates.barcode}
-                                                    </div>
-                                                )}
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className="flex flex-wrap gap-2 justify-end">
+                                                {product.store_names.map((name: string, i: number) => (
+                                                    <span key={i} className="bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 px-3 py-1 rounded-xl text-xs font-black border border-indigo-100 dark:border-indigo-500/20 shadow-sm">
+                                                        {name}
+                                                    </span>
+                                                ))}
                                             </div>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        <div className="flex flex-wrap gap-1 justify-end">
-                                            {product.store_names.map((name: string, i: number) => (
-                                                <span key={i} className="bg-primary/10 text-primary px-2 py-0.5 rounded text-[10px] font-bold border border-primary/20 uppercase whitespace-nowrap">
-                                                    {name}
+                                        </TableCell>
+                                        <TableCell className="text-center">
+                                            <div className={cn(
+                                                "inline-flex items-center px-4 py-1.5 rounded-full text-xs font-black shadow-sm",
+                                                isLowStock ? "bg-rose-50 text-rose-600 border border-rose-100" : "bg-emerald-50 text-emerald-600 border border-emerald-100"
+                                            )}>
+                                                {isLowStock && <AlertCircle className="w-3.5 h-3.5 ml-1.5 animate-pulse" />}
+                                                {product.total_stock} <span className="mr-1 opacity-70">قطعة</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            <div className="font-mono text-sm font-bold text-slate-500 dark:text-slate-400">
+                                                {product.buy_price.toFixed(2)} <span className="text-[10px]">DH</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            <div className="flex flex-col items-end">
+                                                <span className="font-black text-indigo-600 dark:text-indigo-400 text-lg">
+                                                    {product.min_sell_price} <span className="text-xs">DH</span>
                                                 </span>
-                                            ))}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                        <div className={cn(
-                                            "inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase",
-                                            isLowStock ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"
-                                        )}>
-                                            {isLowStock && <AlertCircle className="w-3 h-3 mr-1" />}
-                                            {product.total_stock} قطعة
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className="text-right font-mono text-xs text-muted-foreground">
-                                        {product.buy_price.toFixed(2)}
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        <div className="font-bold text-gray-900 text-sm">
-                                            {product.min_sell_price} - {product.max_sell_price} <span className="text-[10px] text-muted-foreground">DH</span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="h-8 w-8 text-gray-400 hover:text-primary hover:bg-primary/5 rounded-lg"
-                                                onClick={() => openEdit(product)}
-                                            >
-                                                <Edit2 className="w-4 h-4" />
-                                            </Button>
-                                            <ActionIconButton
-                                                action={deleteProduct}
-                                                id={product.id}
-                                                className="w-8 h-8 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </ActionIconButton>
+                                                <span className="text-[10px] text-slate-400 font-bold -mt-1">أقل سعر</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="px-8">
+                                            <div className="flex items-center justify-end gap-2 px-1">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-10 w-10 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-xl transition-all"
+                                                    onClick={() => openEdit(product)}
+                                                >
+                                                    <Edit2 className="w-5 h-5" />
+                                                </Button>
+                                                <ActionIconButton
+                                                    action={deleteProduct}
+                                                    id={product.id}
+                                                    className="w-10 h-10 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl transition-all"
+                                                >
+                                                    <Trash2 className="w-5 h-5" />
+                                                </ActionIconButton>
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            })}
+
+                            {filteredProducts.length === 0 && (
+                                <TableRow>
+                                    <TableCell colSpan={6} className="h-96 text-center">
+                                        <div className="flex flex-col items-center justify-center text-slate-400">
+                                            <div className="w-24 h-24 bg-slate-50 dark:bg-slate-800 rounded-[2rem] flex items-center justify-center mb-6 shadow-sm">
+                                                <Search className="w-12 h-12 text-slate-300" />
+                                            </div>
+                                            <p className="font-black text-2xl text-slate-900 dark:text-white">لا توجد نتائج</p>
+                                            <p className="text-slate-500 font-medium mt-2">جرب البحث بكلمات مختلفة أو إضافة منتج جديد</p>
                                         </div>
                                     </TableCell>
                                 </TableRow>
-                            );
-                        })}
-                        {filteredProducts.length === 0 && (
-                            <TableRow>
-                                <TableCell colSpan={6} className="h-64 text-center">
-                                    <div className="flex flex-col items-center justify-center text-muted-foreground">
-                                        <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-                                            <Search className="w-8 h-8 text-gray-300" />
-                                        </div>
-                                        <p className="font-bold text-gray-900">لم يتم العثور على منتجات</p>
-                                        <p className="text-sm">حاول تغيير فلاتر البحث</p>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
             </div>
         </div>
     );

@@ -99,39 +99,38 @@ export function UserDialog({ stores, onSuccess, user, open: externalOpen, onOpen
         }}>
             {!isEdit && (
                 <DialogTrigger asChild>
-                    <Button className="gap-2 h-10 px-4 rounded-xl shadow-sm hover:shadow-md transition-all font-bold">
-                        <Plus className="w-4 h-4" />
-                        <span>Add New Worker</span>
+                    <Button className="gap-3 h-14 px-8 rounded-2xl gradient-primary shadow-xl shadow-indigo-200 dark:shadow-none font-black text-lg active:scale-95 transition-all text-white border-0">
+                        <Plus className="w-6 h-6" />
+                        <span>إضافة عضو جديد</span>
                     </Button>
                 </DialogTrigger>
             )}
 
-            <DialogContent className="sm:max-w-md overflow-hidden p-0 gap-0 rounded-2xl">
+            <DialogContent className="max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border-0 shadow-2xl rounded-[3.5rem] p-0 overflow-hidden" dir="rtl">
                 {!successData ? (
-                    <>
-                        <DialogHeader className="p-6 pb-2">
-                            <DialogTitle className="text-xl font-bold">
-                                {isEdit ? "Update Member Details" : "New Team Member"}
-                            </DialogTitle>
-                        </DialogHeader>
-                        <div className="p-6 pt-2">
-                            <form action={handleSubmit} className="space-y-4">
-                                {/* Hidden input to guarantee store_id is sent */}
-                                <input type="hidden" name="store_id" value={selectedStore} />
+                    <form action={handleSubmit}>
+                        <div className="p-10 space-y-10">
+                            <DialogHeader>
+                                <DialogTitle className="text-3xl font-black text-slate-900 dark:text-white text-right">
+                                    {isEdit ? "تعديل البيانات" : "عضو فريق جديد"}
+                                </DialogTitle>
+                                <p className="text-right text-slate-500 font-medium">قم بتعبئة بيانات الدخول للموظف</p>
+                            </DialogHeader>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="full_name" className="text-gray-600">Account Owner Name</Label>
+                            <div className="space-y-6">
+                                <div className="space-y-3">
+                                    <Label className="text-right block font-black text-slate-400 uppercase tracking-widest text-[10px]">الاسم الكامل</Label>
                                     <Input
                                         id="full_name"
                                         name="full_name"
                                         required
                                         defaultValue={user?.full_name}
-                                        placeholder="Enter worker's full name"
-                                        className="h-11 rounded-xl"
+                                        placeholder="مثال: يوسف العلوي"
+                                        className="h-14 text-lg font-bold text-right border-0 bg-slate-50 dark:bg-slate-800/50 rounded-2xl shadow-inner focus-visible:ring-primary/20"
                                     />
                                 </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="email" className="text-gray-600">Login Email Address</Label>
+                                <div className="space-y-3">
+                                    <Label className="text-right block font-black text-slate-400 uppercase tracking-widest text-[10px]">البريد الإلكتروني</Label>
                                     <Input
                                         id="email"
                                         name="email"
@@ -139,87 +138,90 @@ export function UserDialog({ stores, onSuccess, user, open: externalOpen, onOpen
                                         required
                                         defaultValue={user?.email}
                                         placeholder="worker@aissaphone.com"
-                                        className="h-11 rounded-xl"
+                                        className="h-14 text-lg font-bold text-left border-0 bg-slate-50 dark:bg-slate-800/50 rounded-2xl shadow-inner focus-visible:ring-primary/20"
                                     />
                                 </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="password" className="text-gray-600">
-                                            {isEdit ? "Set New Password" : "Default Password"}
-                                        </Label>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-3">
+                                        <Label className="text-right block font-black text-slate-400 uppercase tracking-widest text-[10px]">كلمة المرور</Label>
                                         <Input
                                             id="password"
                                             name="password"
                                             type="text"
                                             required={!isEdit}
                                             defaultValue={isEdit ? "" : "123456"}
-                                            placeholder={isEdit ? "Leave blank to keep" : "Temporary pass"}
-                                            className="h-11 font-mono bg-gray-50 rounded-xl"
+                                            placeholder={isEdit ? "اتركه فارغاً للحفظ" : "كلمة سر مؤقتة"}
+                                            className="h-14 font-mono font-black text-center border-0 bg-slate-50 dark:bg-slate-800/50 rounded-2xl shadow-inner focus-visible:ring-primary/20 text-primary"
                                         />
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-gray-600">Assign to Store</Label>
+                                    <div className="space-y-3">
+                                        <Label className="text-right block font-black text-slate-400 uppercase tracking-widest text-[10px]">المتجر المعين</Label>
                                         <Select value={selectedStore} onValueChange={setSelectedStore} required>
-                                            <SelectTrigger className="h-11 rounded-xl">
-                                                <SelectValue placeholder="Select Branch..." />
+                                            <SelectTrigger className="h-14 rounded-2xl border-0 bg-slate-50 dark:bg-slate-800/50 shadow-inner font-bold text-right">
+                                                <SelectValue placeholder="اختر الفرع..." />
                                             </SelectTrigger>
-                                            <SelectContent>
+                                            <SelectContent className="rounded-2xl border-0 shadow-2xl">
                                                 {stores.map(store => (
-                                                    <SelectItem key={store.id} value={store.id}>{store.name}</SelectItem>
+                                                    <SelectItem key={store.id} value={store.id} className="rounded-xl font-bold">{store.name}</SelectItem>
                                                 ))}
                                             </SelectContent>
                                         </Select>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div className="pt-2">
-                                    <Button type="submit" disabled={loading} className="w-full h-12 text-base font-bold rounded-xl shadow-lg shadow-primary/20">
-                                        {loading ? "Processing..." : (isEdit ? "Save Updated Details" : "Activate Worker Account")}
-                                    </Button>
-                                </div>
-                            </form>
+                            <div className="flex flex-col gap-4">
+                                <Button type="submit" disabled={loading} className="w-full h-18 rounded-3xl gradient-primary text-xl font-black shadow-xl border-0 text-white transition-all active:scale-[0.98]">
+                                    {loading ? "جاري المعالجة..." : (isEdit ? "حفظ التغييرات" : "تفعيل الحساب")}
+                                </Button>
+                                <Button type="button" variant="ghost" className="w-full h-14 rounded-2xl font-black text-slate-400" onClick={handleClose}>
+                                    إلغاء
+                                </Button>
+                            </div>
                         </div>
-                    </>
+                    </form>
                 ) : (
-                    <div className="flex flex-col items-center justify-center p-8 text-center bg-white animate-in zoom-in-95 duration-300">
-                        <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-4">
-                            <UserCheck className="w-8 h-8" />
+                    <div className="flex flex-col p-10 text-center animate-in zoom-in-95 duration-500">
+                        <div className="w-24 h-24 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 rounded-[2.5rem] flex items-center justify-center mb-8 mx-auto shadow-sm">
+                            <UserCheck className="w-12 h-12" />
                         </div>
-                        <h2 className="text-2xl font-bold text-gray-900">Account Ready!</h2>
-                        <p className="text-muted-foreground mt-1 mb-6 max-w-xs mx-auto">
-                            Share these login details with the worker.
+                        <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-2">الحساب جاهز!</h2>
+                        <p className="text-slate-500 font-medium mb-10 max-w-[280px] mx-auto leading-relaxed">
+                            قم بمشاركة بيانات الدخول التالية مع الموظف الجديد
                         </p>
 
-                        <div className="w-full bg-gray-50 border border-gray-200 rounded-xl p-4 text-left space-y-3 mb-6 relative group">
+                        <div className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-white/5 rounded-[2.5rem] p-8 text-right space-y-6 mb-10 relative group shadow-inner">
                             <div>
-                                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Name</span>
-                                <div className="font-medium text-gray-900">{successData.name}</div>
+                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">الاسم الكامل</span>
+                                <div className="text-xl font-black text-slate-900 dark:text-white">{successData.name}</div>
                             </div>
-                            <div className="h-px bg-gray-200 w-full" />
+                            <div className="h-px bg-slate-200 dark:bg-white/5" />
                             <div>
-                                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Email</span>
-                                <div className="font-mono text-gray-900 select-all">{successData.email}</div>
+                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">البريد الإلكتروني</span>
+                                <div className="text-lg font-mono font-bold text-slate-700 dark:text-slate-300 select-all">{successData.email}</div>
                             </div>
                             {successData.password && (
-                                <div>
-                                    <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Password</span>
-                                    <div className="font-mono text-lg font-bold text-primary select-all">{successData.password}</div>
-                                </div>
+                                <>
+                                    <div className="h-px bg-slate-200 dark:bg-white/5" />
+                                    <div>
+                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">كلمة المرور</span>
+                                        <div className="text-3xl font-mono font-black text-primary select-all tracking-widest">{successData.password}</div>
+                                    </div>
+                                </>
                             )}
 
                             <Button
                                 size="icon"
                                 variant="ghost"
-                                className="absolute top-2 right-2 hover:bg-white shadow-sm"
+                                className="absolute top-6 left-6 w-12 h-12 rounded-2xl hover:bg-white dark:hover:bg-slate-800 shadow-sm transition-all active:scale-95"
                                 onClick={copyToClipboard}
-                                title="Copy All"
                             >
-                                <Copy className="w-4 h-4" />
+                                <Copy className="w-5 h-5 text-slate-400" />
                             </Button>
                         </div>
 
-                        <Button onClick={handleClose} className="w-full h-12 font-bold rounded-xl">
-                            Done
+                        <Button onClick={handleClose} className="w-full h-18 rounded-3xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xl font-black shadow-xl border-0 transition-all active:scale-[0.98]">
+                            تم
                         </Button>
                     </div>
                 )}

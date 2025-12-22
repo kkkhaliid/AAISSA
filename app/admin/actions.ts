@@ -7,16 +7,23 @@ import { revalidatePath } from "next/cache";
 // --- STORES ---
 
 export async function createStore(formData: FormData) {
+    const supabase = await createClient();
     const name = formData.get("name") as string;
     const location = formData.get("location") as string;
 
-    const supabase = await createClient();
-    const { error } = await supabase.from("stores").insert({
-        name,
-        location,
-    });
+    const { error } = await supabase.from("stores").insert({ name, location });
+    if (error) throw error;
+    revalidatePath("/admin/stores");
+    return { success: true };
+}
 
-    if (error) return { error: error.message };
+export async function updateStore(id: string, formData: FormData) {
+    const supabase = await createClient();
+    const name = formData.get("name") as string;
+    const location = formData.get("location") as string;
+
+    const { error } = await supabase.from("stores").update({ name, location }).eq("id", id);
+    if (error) throw error;
     revalidatePath("/admin/stores");
     return { success: true };
 }

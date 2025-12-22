@@ -4,7 +4,7 @@ import { useState } from "react";
 import { UserDialog } from "@/components/admin/user-dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Store, MoreVertical, Trash2, Edit, Mail } from "lucide-react";
+import { Shield, Store, MoreVertical, Trash2, Edit, Mail, UserCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -66,12 +66,12 @@ export function UsersManager({ initialUsers, stores }: { initialUsers: Profile[]
     }
 
     return (
-        <div className="space-y-8 max-w-6xl mx-auto">
+        <div className="space-y-10 max-w-7xl mx-auto" dir="rtl">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900">Team Management</h1>
-                    <p className="text-muted-foreground">Manage access and roles for your employees</p>
+                    <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white">إدارة الفريق</h1>
+                    <p className="text-slate-500 font-medium mt-2">تحكم في صلاحيات الوصول للموظفين والمسؤولين</p>
                 </div>
                 <UserDialog stores={stores} onSuccess={handleUserCreated} />
             </div>
@@ -87,98 +87,112 @@ export function UsersManager({ initialUsers, stores }: { initialUsers: Profile[]
                 />
             )}
 
-            <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-                <Table>
-                    <TableHeader className="bg-gray-50/50">
-                        <TableRow className="border-gray-100 hover:bg-transparent">
-                            <TableHead className="h-12 font-bold text-gray-600 w-[300px]">Team Member</TableHead>
-                            <TableHead className="font-bold text-gray-600">Access Role</TableHead>
-                            <TableHead className="font-bold text-gray-600">Assigned Store</TableHead>
-                            <TableHead className="font-bold text-gray-600">Join Date</TableHead>
-                            <TableHead className="w-[50px]"></TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {users.map((profile) => (
-                            <TableRow key={profile.id} className="border-gray-100 hover:bg-gray-50/50 transition-colors h-16 group">
-                                <TableCell>
-                                    <div className="flex items-center gap-3">
-                                        <div className={cn(
-                                            "w-10 h-10 rounded-full flex items-center justify-center border shrink-0",
-                                            profile.role === 'admin'
-                                                ? "bg-purple-50 text-purple-600 border-purple-100"
-                                                : "bg-blue-50 text-blue-600 border-blue-100"
-                                        )}>
-                                            <span className="font-bold text-xs">
+            <div className="glass dark:glass-dark rounded-[2.5rem] shadow-premium overflow-hidden border-0">
+                <div className="overflow-x-auto">
+                    <Table>
+                        <TableHeader>
+                            <TableRow className="border-slate-100 dark:border-white/5 hover:bg-transparent h-20">
+                                <TableHead className="text-right font-black text-slate-400 uppercase tracking-widest text-[10px] pr-8">عضو الفريق</TableHead>
+                                <TableHead className="text-right font-black text-slate-400 uppercase tracking-widest text-[10px]">الصلاحية</TableHead>
+                                <TableHead className="text-right font-black text-slate-400 uppercase tracking-widest text-[10px]">المتجر المعين</TableHead>
+                                <TableHead className="text-right font-black text-slate-400 uppercase tracking-widest text-[10px]">تاريخ الانضمام</TableHead>
+                                <TableHead className="w-[80px]"></TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {users.map((profile) => (
+                                <TableRow key={profile.id} className="border-slate-100 dark:border-white/5 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors h-24 group">
+                                    <TableCell className="pr-8">
+                                        <div className="flex items-center gap-4">
+                                            <div className={cn(
+                                                "w-14 h-14 rounded-2xl flex items-center justify-center shadow-sm shrink-0 font-black text-lg transition-transform group-hover:scale-110",
+                                                profile.role === 'admin'
+                                                    ? "bg-indigo-50 dark:bg-indigo-500/10 text-primary"
+                                                    : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600"
+                                            )}>
                                                 {getInitials(profile.full_name)}
-                                            </span>
-                                        </div>
-                                        <div className="min-w-0">
-                                            <div className="font-bold text-gray-900 truncate">{profile.full_name || "Unknown Name"}</div>
-                                            <div className="text-[11px] text-muted-foreground flex items-center gap-1 truncate uppercase tracking-tighter">
-                                                <Mail className="w-3 h-3" />
-                                                {profile.email || "No email"}
+                                            </div>
+                                            <div className="min-w-0">
+                                                <div className="font-black text-slate-900 dark:text-white text-lg truncate">{profile.full_name || "بدون اسم"}</div>
+                                                <div className="text-xs text-slate-500 font-medium flex items-center gap-2 mt-1">
+                                                    <Mail className="w-3.5 h-3.5 text-slate-300" />
+                                                    {profile.email || "بدون بريد"}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <Badge variant="outline" className={cn(
-                                        "rounded-full px-2 py-0 text-[10px] uppercase font-bold border-none",
-                                        profile.role === 'admin' ? "bg-purple-100 text-purple-700" : "bg-blue-100 text-blue-700"
-                                    )}>
-                                        {profile.role === 'admin' ? 'Admin' : 'Worker'}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="flex items-center gap-2 text-gray-600 text-sm">
-                                        <Store className="w-3.5 h-3.5 text-gray-400" />
-                                        <span className="font-medium">
-                                            {/* @ts-ignore */}
-                                            {profile.stores?.name || "Global / All Stores"}
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className={cn(
+                                            "inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest",
+                                            profile.role === 'admin'
+                                                ? "bg-indigo-500 text-white shadow-lg shadow-indigo-200 dark:shadow-none"
+                                                : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
+                                        )}>
+                                            {profile.role === 'admin' ? (
+                                                <>
+                                                    <Shield className="w-3 h-3" />
+                                                    <span>مسؤول</span>
+                                                </>
+                                            ) : (
+                                                <span>موظف</span>
+                                            )}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center gap-3 text-slate-900 dark:text-white font-bold">
+                                            <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                                                <Store className="w-4 h-4 text-slate-400" />
+                                            </div>
+                                            <span>
+                                                {/* @ts-ignore */}
+                                                {profile.stores?.name || "جميع المتاجر"}
+                                            </span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="font-black text-slate-400 text-xs">
+                                        <span suppressHydrationWarning>
+                                            {new Date(profile.created_at).toLocaleDateString("ar-MA", {
+                                                day: 'numeric',
+                                                month: 'long',
+                                                year: 'numeric'
+                                            })}
                                         </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="font-mono text-[11px] text-muted-foreground">
-                                    <span suppressHydrationWarning>
-                                        {new Date(profile.created_at).toLocaleDateString("en-GB", {
-                                            day: '2-digit',
-                                            month: 'short',
-                                            year: 'numeric'
-                                        })}
-                                    </span>
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <MoreVertical className="w-4 h-4 text-gray-400" />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end" className="rounded-xl">
-                                            <DropdownMenuItem onClick={() => openEdit(profile)} className="rounded-lg">
-                                                <Edit className="w-4 h-4 mr-2" />
-                                                Edit Access
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => handleDelete(profile.id)} className="text-red-600 focus:text-red-600 focus:bg-red-50 rounded-lg">
-                                                <Trash2 className="w-4 h-4 mr-2" />
-                                                Remove Profile
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                        {users.length === 0 && (
-                            <TableRow>
-                                <TableCell colSpan={5} className="h-48 text-center text-muted-foreground">
-                                    No team members found. Click "Add New Worker" to start.
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
+                                    </TableCell>
+                                    <TableCell className="pl-8">
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" size="icon" className="h-12 w-12 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all opacity-0 group-hover:opacity-100">
+                                                    <MoreVertical className="w-6 h-6 text-slate-400" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end" className="rounded-2xl border-0 shadow-2xl p-2 min-w-[160px]">
+                                                <DropdownMenuItem onClick={() => openEdit(profile)} className="rounded-xl h-12 gap-3 font-bold cursor-pointer">
+                                                    <Edit className="w-5 h-5 text-slate-400" />
+                                                    <span>تعديل الصلاحيات</span>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => handleDelete(profile.id)} className="text-rose-600 focus:text-rose-600 focus:bg-rose-50 dark:focus:bg-rose-950/30 rounded-xl h-12 gap-3 font-bold cursor-pointer mt-1">
+                                                    <Trash2 className="w-5 h-5" />
+                                                    <span>حذف الحساب</span>
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
             </div>
+
+            {users.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-32 text-slate-300">
+                    <div className="w-24 h-24 bg-slate-50 dark:bg-slate-800 rounded-[2.5rem] flex items-center justify-center mb-6">
+                        <UserCircle className="w-12 h-12" />
+                    </div>
+                    <p className="font-black text-2xl text-slate-900 dark:text-white">لا يوجد أعضاء في الفريق حالياً</p>
+                    <p className="mt-2 font-medium">ابدأ بإضافة موظفيك لتنظيم العمل</p>
+                </div>
+            )}
         </div>
     );
 }
