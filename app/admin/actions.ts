@@ -12,7 +12,7 @@ export async function createStore(formData: FormData) {
     const location = formData.get("location") as string;
 
     const { error } = await supabase.from("stores").insert({ name, location });
-    if (error) throw error;
+    if (error) return { error: error.message };
     revalidatePath("/admin/stores");
     return { success: true };
 }
@@ -23,7 +23,7 @@ export async function updateStore(id: string, formData: FormData) {
     const location = formData.get("location") as string;
 
     const { error } = await supabase.from("stores").update({ name, location }).eq("id", id);
-    if (error) throw error;
+    if (error) return { error: error.message };
     revalidatePath("/admin/stores");
     return { success: true };
 }

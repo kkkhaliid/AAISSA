@@ -56,8 +56,8 @@ export function UserDialog({ stores, onSuccess, user, open: externalOpen, onOpen
 
         setLoading(false);
 
-        if (result.error) {
-            toast.error(result.error);
+        if (result && 'error' in result) {
+            toast.error(result.error as string);
         } else {
             if (!isEdit) {
                 setSuccessData({

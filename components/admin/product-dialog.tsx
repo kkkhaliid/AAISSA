@@ -63,8 +63,8 @@ export function ProductDialog({ stores, product, open: externalOpen, onOpenChang
                 ? await updateProduct(product.id, formData)
                 : await createProduct(formData);
 
-            if (result.error) {
-                toast.error(result.error);
+            if (result && 'error' in result) {
+                toast.error(result.error as string);
             } else {
                 toast.success(isEdit ? "تم تحديث المنتج" : "تم إضافة المنتج بنجاح");
                 handleClose();
