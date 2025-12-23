@@ -36,6 +36,40 @@ export default async function AdminDashboard() {
         .from("products")
         .select("*", { count: 'exact', head: true });
 
+    // 4. Weekly Data for Chart
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(today.getDate() - 6);
+
+    const { data: weeklySales } = await supabase
+        .from("sales")
+        .select("total_price, created_at")
+        .eq("status", "active")
+        .gte("created_at", sevenDaysAgo.toISOString());
+
+    // Aggregate by day
+    const chartData = Array.from({ length: 7 }, (_, i) => {
+        const d = new Date(sevenDaysAgo);
+        d.setDate(d.getDate() + i);
+        const dayLabel = d.toLocaleDateString('ar-MA', { weekday: 'short' });
+        const dateStr = d.toISOString().split('T')[0];
+
+        const dayTotal = weeklySales
+            ?.filter(s => s.created_at.startsWith(dateStr))
+            .reduce((sum, s) => sum + (s.total_price || 0), 0) || 0;
+
+        return { label: dayLabel, value: dayTotal };
+    });
+
+    const maxWeeklyValue = Math.max(...chartData.map(d => d.value), 100);
+
+    // 5. Recent Activity (Last 5 Sales)
+    const { data: recentSales } = await supabase
+        .from("sales")
+        .select(`*, stores(name)`)
+        .eq("status", "active")
+        .order("created_at", { ascending: false })
+        .limit(5);
+
     return (
         <div className="space-y-10 max-w-7xl mx-auto pb-12" dir="rtl">
             {/* Header */}
@@ -111,25 +145,28 @@ export default async function AdminDashboard() {
                             </div>
 
                             <div className="h-64 flex items-end justify-between gap-4 md:gap-6">
-                                {[40, 65, 30, 80, 55, 90, 45].map((h, i) => (
-                                    <div key={i} className="flex-1 flex flex-col justify-end group/bar items-center">
-                                        <div
-                                            className="w-full max-w-[40px] bg-slate-100 dark:bg-slate-800/50 rounded-2xl group-hover/bar:bg-primary/20 transition-all relative overflow-hidden flex flex-col justify-end min-h-[20px]"
-                                            style={{ height: `${h}%` }}
-                                        >
+                                {chartData.map((data, i) => {
+                                    const percentage = (data.value / maxWeeklyValue) * 100;
+                                    return (
+                                        <div key={i} className="flex-1 flex flex-col justify-end group/bar items-center h-full">
                                             <div
-                                                className="w-full gradient-primary rounded-t-2xl shadow-[0_-4px_12px_rgba(79,70,229,0.3)]"
-                                                style={{ height: '40%' }}
-                                            />
-                                            <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-black py-1 px-2 rounded-lg opacity-0 group-hover/bar:opacity-100 transition-all -translate-y-2 group-hover/bar:translate-y-0">
-                                                {h}%
+                                                className="w-full max-w-[40px] bg-slate-100 dark:bg-slate-800/50 rounded-2xl group-hover/bar:bg-primary/20 transition-all relative overflow-hidden flex flex-col justify-end min-h-[4px]"
+                                                style={{ height: `${Math.max(percentage, 5)}%` }} // Minimum 5% height so it's not "invisible"
+                                            >
+                                                <div
+                                                    className="w-full gradient-primary rounded-t-2xl shadow-[0_-4px_12px_rgba(79,70,229,0.3)]"
+                                                    style={{ height: '40%' }}
+                                                />
+                                                <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-black py-1 px-2 rounded-lg opacity-0 group-hover/bar:opacity-100 transition-all -translate-y-2 group-hover/bar:translate-y-0 z-10 whitespace-nowrap">
+                                                    {data.value.toLocaleString()} DH
+                                                </div>
+                                            </div>
+                                            <div className="text-[10px] font-black text-slate-400 mt-4 uppercase tracking-widest">
+                                                {data.label}
                                             </div>
                                         </div>
-                                        <div className="text-[10px] font-black text-slate-400 mt-4 uppercase tracking-widest">
-                                            {['الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت', 'الأحد'][i]}
-                                        </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>
@@ -165,20 +202,27 @@ export default async function AdminDashboard() {
                     <div className="glass dark:glass-dark p-8 rounded-[2.5rem] shadow-premium h-full flex flex-col">
                         <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-6">نشاط المتجر</h3>
                         <div className="space-y-6 flex-1">
-                            {[1, 2, 3, 4].map((i) => (
-                                <div key={i} className="flex gap-4 items-start group cursor-pointer">
+                            {recentSales?.map((sale) => (
+                                <div key={sale.id} className="flex gap-4 items-start group cursor-pointer">
                                     <div className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-white transition-all shadow-sm">
                                         <ShoppingBag className="w-5 h-5" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-bold text-slate-900 dark:text-white truncate">تم بيع iPhone 13 Pro Max</p>
-                                        <p className="text-xs text-slate-500 font-medium">منذ 15 دقيقة • متجر الرباط</p>
+                                        <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
+                                            {sale.product_name || "منتج غير معروف"}
+                                        </p>
+                                        <p className="text-xs text-slate-500 font-medium whitespace-nowrap overflow-hidden text-ellipsis">
+                                            {new Date(sale.created_at).toLocaleTimeString('ar-MA', { hour: '2-digit', minute: '2-digit' })} • {sale.stores?.name}
+                                        </p>
                                     </div>
-                                    <div className="text-xs font-black text-emerald-600">
-                                        +9,500
+                                    <div className="text-xs font-black text-emerald-600 shrink-0">
+                                        +{sale.total_price.toLocaleString()} DH
                                     </div>
                                 </div>
                             ))}
+                            {(!recentSales || recentSales.length === 0) && (
+                                <p className="text-center text-slate-400 py-10 font-bold">لا يوجد مبيعات اليوم</p>
+                            )}
                         </div>
                         <Button variant="ghost" className="w-full mt-8 rounded-2xl h-12 font-black text-primary hover:bg-primary/5">
                             مشاهدة الكل
