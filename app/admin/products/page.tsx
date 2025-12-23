@@ -20,10 +20,10 @@ export default async function ProductsPage() {
         }));
 
         return (
-            <div className="space-y-6 max-w-7xl mx-auto">
+            <div className="space-y-6 max-w-7xl mx-auto" dir="rtl">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900">Inventory Management</h1>
-                    <p className="text-muted-foreground mt-1">Manage stock, prices, and product details</p>
+                    <h1 className="text-3xl font-bold tracking-tight text-gray-900">إدارة المخزون</h1>
+                    <p className="text-muted-foreground mt-1">إدارة المخزون والأسعار وتفاصيل المنتجات</p>
                 </div>
 
                 <ProductsManager products={safeProducts as any[]} stores={storesResult.data || []} />
@@ -32,10 +32,10 @@ export default async function ProductsPage() {
     } catch (error) {
         console.error("Products page error:", error);
         return (
-            <div className="flex items-center justify-center h-screen">
+            <div className="flex items-center justify-center h-screen" dir="rtl">
                 <div className="text-center">
-                    <h1 className="text-2xl font-bold text-red-600 mb-4">Error Loading Products</h1>
-                    <p className="text-gray-600">Please check the console for details</p>
+                    <h1 className="text-2xl font-bold text-red-600 mb-4">خطأ في تحميل المنتجات</h1>
+                    <p className="text-gray-600">يرجى مراجعة وحدة التحكم للحصول على التفاصيل</p>
                     <pre className="mt-4 text-left bg-gray-100 p-4 rounded">{String(error)}</pre>
                 </div>
             </div>
