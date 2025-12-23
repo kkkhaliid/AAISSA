@@ -40,6 +40,7 @@ export async function deleteStore(id: string, formData: FormData) {
 
 export async function createProduct(formData: FormData) {
     const name = formData.get("name") as string;
+    const description = formData.get("description") as string || null;
     const barcode = formData.get("barcode") as string || null;
     const stock = parseInt(formData.get("stock") as string) || 0;
     const buy_price = parseFloat(formData.get("buy_price") as string) || 0;
@@ -78,14 +79,14 @@ export async function createProduct(formData: FormData) {
     if (existingTemplate) {
         templateId = existingTemplate.id;
         // Update template details if updated
-        const updateData: any = { name };
+        const updateData: any = { name, description };
         if (barcode) updateData.barcode = barcode;
         if (image_url) updateData.image_url = image_url;
         await supabase.from("product_templates").update(updateData).eq("id", templateId);
     } else {
         const { data: newTemplate, error: tError } = await supabase
             .from("product_templates")
-            .insert({ name, barcode: barcode || null, image_url })
+            .insert({ name, description, barcode: barcode || null, image_url })
             .select("id")
             .single();
         if (tError) return { error: tError.message };
@@ -113,6 +114,7 @@ export async function createProduct(formData: FormData) {
 
 export async function updateProduct(id: string, formData: FormData) {
     const name = formData.get("name") as string;
+    const description = formData.get("description") as string || null;
     const barcode = formData.get("barcode") as string || null;
     const stock = parseInt(formData.get("stock") as string) || 0;
     const buy_price = parseFloat(formData.get("buy_price") as string) || 0;
@@ -128,7 +130,7 @@ export async function updateProduct(id: string, formData: FormData) {
     if (!currentProduct) return { error: "Product not found" };
 
     // 2. Update Template
-    const templateUpdate: any = { name, barcode: barcode || null };
+    const templateUpdate: any = { name, description, barcode: barcode || null };
     if (imageFile && imageFile.size > 0) {
         const fileExt = imageFile.name.split('.').pop();
         const fileName = `${Math.random()}.${fileExt}`;

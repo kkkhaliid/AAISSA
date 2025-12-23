@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Image as ImageIcon, X, Upload } from "lucide-react";
+import { Plus, Image as ImageIcon, X, Upload, AlignLeft } from "lucide-react";
 import { createProduct, updateProduct } from "@/app/admin/actions";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { Textarea } from "@/components/ui/textarea";
 
 type Store = { id: string; name: string };
 type Product = {
@@ -21,6 +22,7 @@ type Product = {
     max_sell_price: number;
     product_templates: {
         name: string;
+        description: string | null;
         barcode: string | null;
         image_url: string | null;
     } | null;
@@ -175,6 +177,15 @@ export function ProductDialog({ stores, product, open: externalOpen, onOpenChang
                                         defaultValue={product?.product_templates?.barcode || ""}
                                         placeholder="اختياري"
                                         className="h-14 font-mono font-bold text-left border-0 bg-slate-50 dark:bg-slate-800/50 rounded-2xl shadow-inner focus-visible:ring-primary/20"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-right block font-black text-slate-400 uppercase tracking-widest text-[10px]">وصف المنتج</Label>
+                                    <Textarea
+                                        name="description"
+                                        defaultValue={product?.product_templates?.description || ""}
+                                        placeholder="تفاصيل المنتج الإضافية..."
+                                        className="min-h-[100px] text-lg font-bold text-right border-0 bg-slate-50 dark:bg-slate-800/50 rounded-2xl shadow-inner focus-visible:ring-primary/20 p-4 resize-none"
                                     />
                                 </div>
                             </div>

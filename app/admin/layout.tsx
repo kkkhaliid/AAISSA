@@ -51,7 +51,7 @@ export default async function AdminLayout({
             <AdminSidebar />
 
             {/* Main Content */}
-            <main className="pt-44 pr-0 md:pr-64 px-6 md:px-10 pb-24 md:pb-12 min-h-screen">
+            <main className="pt-30 pr-0 md:pr-64 px-6 md:px-10 pb-24 md:pb-12 min-h-screen">
                 <div className="max-w-7xl mx-auto">
                     {children}
                 </div>
