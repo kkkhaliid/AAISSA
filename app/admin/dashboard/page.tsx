@@ -129,44 +129,72 @@ export default async function AdminDashboard() {
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
                 {/* Left: Charts/Performance */}
                 <div className="xl:col-span-2 space-y-8">
-                    <div className="glass dark:glass-dark p-8 rounded-[2.5rem] shadow-premium relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl group-hover:bg-primary/10 transition-colors" />
+                    <div className="glass dark:glass-dark p-8 rounded-[3rem] shadow-premium relative overflow-hidden group border border-white/20 dark:border-white/5">
+                        {/* Dynamic Background Glow */}
+                        <div className="absolute -top-20 -right-20 w-80 h-80 bg-primary/10 rounded-full blur-[100px] group-hover:bg-primary/20 transition-all duration-700" />
+                        <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-violet-500/10 rounded-full blur-[100px] group-hover:bg-violet-500/20 transition-all duration-700" />
 
                         <div className="relative">
-                            <div className="flex items-center justify-between mb-10">
+                            <div className="flex items-center justify-between mb-12">
                                 <div>
-                                    <h3 className="text-2xl font-black text-slate-900 dark:text-white">الأداء الأسبوعي</h3>
-                                    <p className="text-slate-500 font-medium">مراقبة المبيعات على مدار 7 أيام</p>
+                                    <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">الأداء الأسبوعي</h3>
+                                    <p className="text-slate-500 font-medium mt-1">إحصائيات المبيعات الحية لآخر 7 أيام</p>
                                 </div>
-                                <select className="bg-slate-50 dark:bg-slate-800 border-0 rounded-xl px-4 py-2 font-bold text-sm focus:ring-2 ring-primary/20">
-                                    <option>آخر 7 أيام</option>
-                                    <option>آخر 30 يوم</option>
-                                </select>
+                                <div className="flex items-center gap-2 bg-slate-100/50 dark:bg-slate-800/50 p-1.5 rounded-2xl backdrop-blur-sm border border-slate-200/50 dark:border-white/5">
+                                    <button className="px-4 py-2 rounded-xl text-xs font-black bg-white dark:bg-slate-700 shadow-sm text-primary">7 أيام</button>
+                                    <button className="px-4 py-2 rounded-xl text-xs font-black text-slate-400 hover:text-slate-600 transition-colors">30 يوم</button>
+                                </div>
                             </div>
 
-                            <div className="h-64 flex items-end justify-between gap-4 md:gap-6">
-                                {chartData.map((data, i) => {
-                                    const percentage = (data.value / maxWeeklyValue) * 100;
-                                    return (
-                                        <div key={i} className="flex-1 flex flex-col justify-end group/bar items-center h-full">
-                                            <div
-                                                className="w-full max-w-[40px] bg-slate-100 dark:bg-slate-800/50 rounded-2xl group-hover/bar:bg-primary/20 transition-all relative overflow-hidden flex flex-col justify-end min-h-[4px]"
-                                                style={{ height: `${Math.max(percentage, 5)}%` }} // Minimum 5% height so it's not "invisible"
-                                            >
+                            <div className="relative h-72 w-full flex items-end">
+                                {/* Grid Lines */}
+                                <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-50">
+                                    {[1, 2, 3, 4].map((i) => (
+                                        <div key={i} className="w-full border-t border-dashed border-slate-200 dark:border-white/10" />
+                                    ))}
+                                    <div className="w-full border-t border-slate-200 dark:border-white/10" />
+                                </div>
+
+                                <div className="relative z-10 w-full h-full flex items-end justify-between gap-3 md:gap-5 px-2">
+                                    {chartData.map((data, i) => {
+                                        const percentage = (data.value / maxWeeklyValue) * 100;
+                                        return (
+                                            <div key={i} className="flex-1 flex flex-col justify-end group/bar items-center h-full relative">
+                                                {/* Glowing Base */}
                                                 <div
-                                                    className="w-full gradient-primary rounded-t-2xl shadow-[0_-4px_12px_rgba(79,70,229,0.3)]"
-                                                    style={{ height: '40%' }}
+                                                    className="absolute bottom-10 w-full max-w-[32px] bg-primary/20 blur-xl opacity-0 group-hover/bar:opacity-100 transition-opacity duration-500"
+                                                    style={{ height: `${Math.max(percentage, 10)}%` }}
                                                 />
-                                                <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-black py-1 px-2 rounded-lg opacity-0 group-hover/bar:opacity-100 transition-all -translate-y-2 group-hover/bar:translate-y-0 z-10 whitespace-nowrap">
-                                                    {data.value.toLocaleString()} DH
+
+                                                <div
+                                                    className="w-full max-w-[40px] bg-slate-200/50 dark:bg-slate-800/50 rounded-full group-hover/bar:bg-slate-300/50 transition-all duration-500 relative overflow-hidden flex flex-col justify-end min-h-[8px] cursor-pointer"
+                                                    style={{ height: `${Math.max(percentage, 8)}%` }}
+                                                >
+                                                    {/* Animated Fill */}
+                                                    <div
+                                                        className="w-full bg-gradient-to-t from-primary via-indigo-500 to-indigo-400 rounded-full shadow-[0_-4px_16px_rgba(79,70,229,0.4)] transition-all duration-1000 ease-out"
+                                                        style={{ height: '100%' }}
+                                                    />
+
+                                                    {/* Glass Highlight */}
+                                                    <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12 -translate-x-full group-hover/bar:translate-x-full transition-transform duration-1000" />
+                                                </div>
+
+                                                {/* Tooltip */}
+                                                <div className="absolute bottom-full mb-4 left-1/2 -translate-x-1/2 opacity-0 scale-50 group-hover/bar:opacity-100 group-hover/bar:scale-100 transition-all duration-300 z-20 pointer-events-none">
+                                                    <div className="bg-slate-900/90 dark:bg-white/90 backdrop-blur-md text-white dark:text-slate-900 py-2 px-4 rounded-2xl shadow-2xl border border-white/10 text-xs font-black whitespace-nowrap">
+                                                        {data.value.toLocaleString()} DH
+                                                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-900/90 dark:border-t-white/90" />
+                                                    </div>
+                                                </div>
+
+                                                <div className="text-[10px] font-black text-slate-400 mt-6 uppercase tracking-[0.2em]">
+                                                    {data.label}
                                                 </div>
                                             </div>
-                                            <div className="text-[10px] font-black text-slate-400 mt-4 uppercase tracking-widest">
-                                                {data.label}
-                                            </div>
-                                        </div>
-                                    );
-                                })}
+                                        );
+                                    })}
+                                </div>
                             </div>
                         </div>
                     </div>
