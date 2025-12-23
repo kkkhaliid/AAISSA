@@ -30,7 +30,7 @@ export default async function AdminLayout({
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900" dir="rtl">
             {/* Header */}
-            <header className="h-20 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-200/50 dark:border-white/5 fixed top-0 right-0 left-0 z-50 flex items-center justify-between px-6 md:px-10 transition-all duration-300">
+            <header className="h-20 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-200/50 dark:border-white/5 fixed top-0 right-0 left-0 z-[60] flex items-center justify-between px-6 md:px-10 transition-all duration-300">
                 <div className="flex items-center gap-4 md:gap-6">
                     <MobileNav signOutAction={signOut} />
                     <div className="flex flex-col">
@@ -51,7 +51,7 @@ export default async function AdminLayout({
             <AdminSidebar />
 
             {/* Main Content */}
-            <main className="pt-32 pr-0 md:pr-64 p-6 md:p-10 pb-24 md:pb-12 min-h-screen">
+            <main className="pt-40 pr-0 md:pr-64 p-6 md:p-10 pb-24 md:pb-12 min-h-screen">
                 <div className="max-w-7xl mx-auto">
                     {children}
                 </div>

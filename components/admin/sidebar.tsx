@@ -12,7 +12,7 @@ export const menuItems = [
 
 export function AdminSidebar() {
     return (
-        <aside className="w-64 bg-white/70 dark:bg-slate-900/70 backdrop-blur-2xl border-l border-slate-200/50 dark:border-white/5 hidden md:flex flex-col h-screen fixed right-0 top-0 pt-24 z-40 shadow-premium">
+        <aside className="w-64 bg-white/70 dark:bg-slate-900/70 backdrop-blur-2xl border-l border-slate-200/50 dark:border-white/5 hidden md:flex flex-col h-screen fixed right-0 top-0 pt-32 z-40 shadow-premium">
             <div className="flex-1 px-4 space-y-2 py-4">
                 {menuItems.map((item) => (
                     <Link
