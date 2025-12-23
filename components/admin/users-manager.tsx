@@ -87,101 +87,115 @@ export function UsersManager({ initialUsers, stores }: { initialUsers: Profile[]
                 />
             )}
 
-            <div className="glass dark:glass-dark rounded-[2.5rem] shadow-premium overflow-hidden border-0">
-                <div className="overflow-x-auto">
-                    <Table>
-                        <TableHeader>
-                            <TableRow className="border-slate-100 dark:border-white/5 hover:bg-transparent h-20">
-                                <TableHead className="text-right font-black text-slate-400 uppercase tracking-widest text-[10px] pr-8">عضو الفريق</TableHead>
-                                <TableHead className="text-right font-black text-slate-400 uppercase tracking-widest text-[10px]">الصلاحية</TableHead>
-                                <TableHead className="text-right font-black text-slate-400 uppercase tracking-widest text-[10px]">المتجر المعين</TableHead>
-                                <TableHead className="text-right font-black text-slate-400 uppercase tracking-widest text-[10px]">تاريخ الانضمام</TableHead>
-                                <TableHead className="w-[80px]"></TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {users.map((profile) => (
-                                <TableRow key={profile.id} className="border-slate-100 dark:border-white/5 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors h-24 group">
-                                    <TableCell className="pr-8">
-                                        <div className="flex items-center gap-4">
-                                            <div className={cn(
-                                                "w-14 h-14 rounded-2xl flex items-center justify-center shadow-sm shrink-0 font-black text-lg transition-transform group-hover:scale-110",
-                                                profile.role === 'admin'
-                                                    ? "bg-indigo-50 dark:bg-indigo-500/10 text-primary"
-                                                    : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600"
-                                            )}>
-                                                {getInitials(profile.full_name)}
-                                            </div>
-                                            <div className="min-w-0">
-                                                <div className="font-black text-slate-900 dark:text-white text-lg truncate">{profile.full_name || "بدون اسم"}</div>
-                                                <div className="text-xs text-slate-500 font-medium flex items-center gap-2 mt-1">
-                                                    <Mail className="w-3.5 h-3.5 text-slate-300" />
-                                                    {profile.email || "بدون بريد"}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className={cn(
-                                            "inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest",
-                                            profile.role === 'admin'
-                                                ? "bg-indigo-500 text-white shadow-lg shadow-indigo-200 dark:shadow-none"
-                                                : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
-                                        )}>
-                                            {profile.role === 'admin' ? (
-                                                <>
-                                                    <Shield className="w-3 h-3" />
-                                                    <span>مسؤول</span>
-                                                </>
-                                            ) : (
-                                                <span>موظف</span>
-                                            )}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="flex items-center gap-3 text-slate-900 dark:text-white font-bold">
-                                            <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                                                <Store className="w-4 h-4 text-slate-400" />
-                                            </div>
-                                            <span>
-                                                {/* @ts-ignore */}
-                                                {profile.stores?.name || "جميع المتاجر"}
-                                            </span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className="font-black text-slate-400 text-xs">
-                                        <span suppressHydrationWarning>
-                                            {new Date(profile.created_at).toLocaleDateString("ar-MA", {
-                                                day: 'numeric',
-                                                month: 'long',
-                                                year: 'numeric'
-                                            })}
-                                        </span>
-                                    </TableCell>
-                                    <TableCell className="pl-8">
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" size="icon" className="h-12 w-12 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all opacity-0 group-hover:opacity-100">
-                                                    <MoreVertical className="w-6 h-6 text-slate-400" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end" className="rounded-2xl border-0 shadow-2xl p-2 min-w-[160px]">
-                                                <DropdownMenuItem onClick={() => openEdit(profile)} className="rounded-xl h-12 gap-3 font-bold cursor-pointer">
-                                                    <Edit className="w-5 h-5 text-slate-400" />
-                                                    <span>تعديل الصلاحيات</span>
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => handleDelete(profile.id)} className="text-rose-600 focus:text-rose-600 focus:bg-rose-50 dark:focus:bg-rose-950/30 rounded-xl h-12 gap-3 font-bold cursor-pointer mt-1">
-                                                    <Trash2 className="w-5 h-5" />
-                                                    <span>حذف الحساب</span>
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+            {/* Users List - Floating Card Rows */}
+            <div className="space-y-4">
+                {/* Custom Card Header - Only visible on desktop */}
+                <div className="grid grid-cols-5 px-10 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 hidden md:grid">
+                    <div className="pr-4">عضو الفريق</div>
+                    <div>الصلاحية</div>
+                    <div>المتجر المعين</div>
+                    <div>تاريخ الانضمام</div>
+                    <div className="text-left">الإجراءات</div>
                 </div>
+
+                {users.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-32 text-slate-300">
+                        <div className="w-24 h-24 bg-slate-50 dark:bg-slate-800 rounded-[2.5rem] flex items-center justify-center mb-6">
+                            <UserCircle className="w-12 h-12" />
+                        </div>
+                        <p className="font-black text-2xl text-slate-900 dark:text-white">لا يوجد أعضاء في الفريق حالياً</p>
+                        <p className="mt-2 font-medium">ابدأ بإضافة موظفيك لتنظيم العمل</p>
+                    </div>
+                ) : (
+                    users.map((profile) => (
+                        <div
+                            key={profile.id}
+                            className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center bg-white dark:bg-slate-900 p-6 md:p-5 md:px-10 rounded-[2.5rem] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ring-1 ring-black/5 dark:ring-white/5 group active:scale-[0.99]"
+                        >
+                            {/* User Profile Info */}
+                            <div className="flex items-center gap-5">
+                                <div className={cn(
+                                    "w-16 h-16 rounded-[1.5rem] flex items-center justify-center shadow-lg shrink-0 font-black text-xl transition-all duration-500 group-hover:scale-110 group-hover:rotate-3",
+                                    profile.role === 'admin'
+                                        ? "bg-indigo-500 text-white shadow-indigo-500/20"
+                                        : "bg-emerald-500 text-white shadow-emerald-500/20"
+                                )}>
+                                    {getInitials(profile.full_name)}
+                                </div>
+                                <div className="min-w-0">
+                                    <div className="font-black text-slate-900 dark:text-white text-xl tracking-tight truncate">{profile.full_name || "بدون اسم"}</div>
+                                    <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1 truncate">
+                                        {profile.email || "بدون بريد إلكتروني"}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Role Indicator */}
+                            <div>
+                                <div className={cn(
+                                    "inline-flex items-center gap-2 px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest",
+                                    profile.role === 'admin'
+                                        ? "bg-indigo-500/10 text-indigo-500 ring-1 ring-indigo-500/20"
+                                        : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 ring-1 ring-black/5 dark:ring-white/5"
+                                )}>
+                                    {profile.role === 'admin' && <Shield className="w-3.5 h-3.5" />}
+                                    <span>{profile.role === 'admin' ? "مسؤول" : "موظف"}</span>
+                                </div>
+                            </div>
+
+                            {/* Store Name */}
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center ring-1 ring-black/5 dark:ring-white/5">
+                                    <Store className="w-5 h-5 text-slate-400" />
+                                </div>
+                                <span className="font-bold text-slate-700 dark:text-slate-300">
+                                    {/* @ts-ignore */}
+                                    {profile.stores?.name || "جميع المتاجر"}
+                                </span>
+                            </div>
+
+                            {/* Created Date */}
+                            <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                <span suppressHydrationWarning>
+                                    {new Date(profile.created_at).toLocaleDateString("ar-MA", {
+                                        day: 'numeric',
+                                        month: 'long',
+                                        year: 'numeric'
+                                    })}
+                                </span>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex justify-end items-center gap-2">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => openEdit(profile)}
+                                    className="h-12 w-12 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-slate-400 hover:text-primary"
+                                >
+                                    <Edit className="w-5 h-5" />
+                                </Button>
+
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" size="icon" className="h-12 w-12 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-slate-400">
+                                            <MoreVertical className="w-5 h-5" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="start" className="rounded-2xl border-0 shadow-2xl p-2 min-w-[180px] ring-1 ring-black/5">
+                                        <DropdownMenuItem
+                                            onClick={() => handleDelete(profile.id)}
+                                            className="text-rose-600 focus:text-rose-600 focus:bg-rose-50 dark:focus:bg-rose-950/30 rounded-xl h-12 gap-3 font-bold cursor-pointer"
+                                        >
+                                            <Trash2 className="w-5 h-5" />
+                                            <span>حذف الحساب</span>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
+                        </div>
+                    ))
+                )}
             </div>
 
             {users.length === 0 && (

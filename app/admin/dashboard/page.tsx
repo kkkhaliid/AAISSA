@@ -1,78 +1,16 @@
+import { Suspense } from "react";
 import { createClient } from "@/utils/supabase/server";
-import { DollarSign, ShoppingBag, TrendingUp, AlertTriangle, Plus, Users, ArrowRight, Calendar } from "lucide-react";
+import { Calendar } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { KPICard, KPICardSkeleton, QuickAction } from "@/components/admin/dashboard-components";
+import { PerformanceChart, PerformanceChartSkeleton, ActivitySidebar, ActivitySidebarSkeleton } from "@/components/admin/dashboard-charts";
 
 export default async function AdminDashboard() {
-    const supabase = await createClient();
-
-    // -- DATA FETCHING --
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
-    // 1. Sales Today
-    const { data: salesToday } = await supabase
-        .from("sales")
-        .select("total_price, profit")
-        .eq("status", "active")
-        .gte("created_at", today.toISOString())
-        .lt("created_at", tomorrow.toISOString());
-
-    const totalSalesToday = salesToday?.reduce((sum, s) => sum + (s.total_price || 0), 0) || 0;
-    const totalProfitToday = salesToday?.reduce((sum, s) => sum + (s.profit || 0), 0) || 0;
-
-    // 2. Low Stock Alerts
-    // We want meaningful alerts. Let's say < 5 stock.
-    const { count: lowStockCount } = await supabase
-        .from("products")
-        .select("*", { count: 'exact', head: true })
-        .lt("stock", 5);
-
-    // 3. Total Products
-    const { count: totalProducts } = await supabase
-        .from("products")
-        .select("*", { count: 'exact', head: true });
-
-    // 4. Weekly Data for Chart
-    const sevenDaysAgo = new Date(today);
-    sevenDaysAgo.setDate(today.getDate() - 6);
-
-    const { data: weeklySales } = await supabase
-        .from("sales")
-        .select("total_price, created_at")
-        .eq("status", "active")
-        .gte("created_at", sevenDaysAgo.toISOString());
-
-    // Aggregate by day
-    const chartData = Array.from({ length: 7 }, (_, i) => {
-        const d = new Date(sevenDaysAgo);
-        d.setDate(d.getDate() + i);
-        const dayLabel = d.toLocaleDateString('ar-MA', { weekday: 'short' });
-        const dateStr = d.toISOString().split('T')[0];
-
-        const dayTotal = weeklySales
-            ?.filter(s => s.created_at.startsWith(dateStr))
-            .reduce((sum, s) => sum + (s.total_price || 0), 0) || 0;
-
-        return { label: dayLabel, value: dayTotal };
-    });
-
-    const maxWeeklyValue = Math.max(...chartData.map(d => d.value), 100);
-
-    // 5. Recent Activity (Last 5 Sales)
-    const { data: recentSales } = await supabase
-        .from("sales")
-        .select(`*, stores(name)`)
-        .eq("status", "active")
-        .order("created_at", { ascending: false })
-        .limit(5);
-
     return (
         <div className="space-y-10 max-w-7xl mx-auto pb-12" dir="rtl">
-            {/* Header */}
+            {/* Header - Instant */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                     <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white">
@@ -93,232 +31,105 @@ export default async function AdminDashboard() {
                 </div>
             </div>
 
-            {/* KPI Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <KPICard
-                    title="مبيعات اليوم"
-                    value={`${totalSalesToday.toFixed(2)} DH`}
-                    icon={DollarSign}
-                    trend="إجمالي المحصلة"
-                    color="indigo"
-                />
-                <KPICard
-                    title="صافي الأرباح"
-                    value={`${totalProfitToday.toFixed(2)} DH`}
-                    icon={TrendingUp}
-                    trend="أرباح اليوم"
-                    color="emerald"
-                />
-                <KPICard
-                    title="نواقص المخزون"
-                    value={lowStockCount?.toString() || "0"}
-                    icon={AlertTriangle}
-                    trend="تحتاج لإعادة ملء"
-                    color={lowStockCount && lowStockCount > 0 ? "rose" : "slate"}
-                />
-                <KPICard
-                    title="إجمالي المنتجات"
-                    value={totalProducts?.toString() || "0"}
-                    icon={ShoppingBag}
-                    trend="في المستودع"
-                    color="amber"
-                />
-            </div>
+            {/* KPI Cards - Streaming */}
+            <Suspense fallback={
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    {[...Array(4)].map((_, i) => <KPICardSkeleton key={i} />)}
+                </div>
+            }>
+                <KPICardsData />
+            </Suspense>
 
             {/* Main Sections Grid */}
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
                 {/* Left: Charts/Performance */}
                 <div className="xl:col-span-2 space-y-8">
-                    <div className="glass dark:glass-dark p-8 rounded-[3rem] shadow-premium relative overflow-hidden group border border-white/20 dark:border-white/5">
-                        {/* Dynamic Background Glow */}
-                        <div className="absolute -top-20 -right-20 w-80 h-80 bg-primary/10 rounded-full blur-[100px] group-hover:bg-primary/20 transition-all duration-700" />
-                        <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-violet-500/10 rounded-full blur-[100px] group-hover:bg-violet-500/20 transition-all duration-700" />
+                    <Suspense fallback={<PerformanceChartSkeleton />}>
+                        <PerformanceChartData />
+                    </Suspense>
 
-                        <div className="relative">
-                            <div className="flex items-center justify-between mb-12">
-                                <div>
-                                    <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">الأداء الأسبوعي</h3>
-                                    <p className="text-slate-500 font-medium mt-1">إحصائيات المبيعات الحية لآخر 7 أيام</p>
-                                </div>
-                                <div className="flex items-center gap-2 bg-slate-100/50 dark:bg-slate-800/50 p-1.5 rounded-2xl backdrop-blur-sm border border-slate-200/50 dark:border-white/5">
-                                    <button className="px-4 py-2 rounded-xl text-xs font-black bg-white dark:bg-slate-700 shadow-sm text-primary">7 أيام</button>
-                                    <button className="px-4 py-2 rounded-xl text-xs font-black text-slate-400 hover:text-slate-600 transition-colors">30 يوم</button>
-                                </div>
-                            </div>
-
-                            <div className="relative h-72 w-full flex items-end">
-                                {/* Grid Lines */}
-                                <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-50">
-                                    {[1, 2, 3, 4].map((i) => (
-                                        <div key={i} className="w-full border-t border-dashed border-slate-200 dark:border-white/10" />
-                                    ))}
-                                    <div className="w-full border-t border-slate-200 dark:border-white/10" />
-                                </div>
-
-                                <div className="relative z-10 w-full h-full flex items-end justify-between gap-3 md:gap-5 px-2">
-                                    {chartData.map((data, i) => {
-                                        const percentage = (data.value / maxWeeklyValue) * 100;
-                                        return (
-                                            <div key={i} className="flex-1 flex flex-col justify-end group/bar items-center h-full relative">
-                                                {/* Glowing Base */}
-                                                <div
-                                                    className="absolute bottom-10 w-full max-w-[32px] bg-primary/20 blur-xl opacity-0 group-hover/bar:opacity-100 transition-opacity duration-500"
-                                                    style={{ height: `${Math.max(percentage, 10)}%` }}
-                                                />
-
-                                                <div
-                                                    className="w-full max-w-[40px] bg-slate-200/50 dark:bg-slate-800/50 rounded-full group-hover/bar:bg-slate-300/50 transition-all duration-500 relative overflow-hidden flex flex-col justify-end min-h-[8px] cursor-pointer"
-                                                    style={{ height: `${Math.max(percentage, 8)}%` }}
-                                                >
-                                                    {/* Animated Fill */}
-                                                    <div
-                                                        className="w-full bg-gradient-to-t from-primary via-indigo-500 to-indigo-400 rounded-full shadow-[0_-4px_16px_rgba(79,70,229,0.4)] transition-all duration-1000 ease-out"
-                                                        style={{ height: '100%' }}
-                                                    />
-
-                                                    {/* Glass Highlight */}
-                                                    <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12 -translate-x-full group-hover/bar:translate-x-full transition-transform duration-1000" />
-                                                </div>
-
-                                                {/* Tooltip */}
-                                                <div className="absolute bottom-full mb-4 left-1/2 -translate-x-1/2 opacity-0 scale-50 group-hover/bar:opacity-100 group-hover/bar:scale-100 transition-all duration-300 z-20 pointer-events-none">
-                                                    <div className="bg-slate-900/90 dark:bg-white/90 backdrop-blur-md text-white dark:text-slate-900 py-2 px-4 rounded-2xl shadow-2xl border border-white/10 text-xs font-black whitespace-nowrap">
-                                                        {data.value.toLocaleString()} DH
-                                                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-900/90 dark:border-t-white/90" />
-                                                    </div>
-                                                </div>
-
-                                                <div className="text-[10px] font-black text-slate-400 mt-6 uppercase tracking-[0.2em]">
-                                                    {data.label}
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Quick Actions */}
+                    {/* Quick Actions - Instant */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <QuickAction
-                            href="/admin/products"
-                            title="إضافة منتج"
-                            subtitle="تحديث المخزون"
-                            icon={Plus}
-                            color="indigo"
-                        />
-                        <QuickAction
-                            href="/admin/users"
-                            title="إدارة الموظفين"
-                            subtitle="الصلاحيات والمستخدمين"
-                            icon={Users}
-                            color="emerald"
-                        />
-                        <QuickAction
-                            href="/admin/sales"
-                            title="سجل المبيعات"
-                            subtitle="مراجعة العمليات"
-                            icon={ArrowRight}
-                            color="slate"
-                        />
+                        <QuickAction href="/admin/products" title="إضافة منتج" subtitle="تحديث المخزون" icon="Plus" color="indigo" />
+                        <QuickAction href="/admin/users" title="إدارة الموظفين" subtitle="الصلاحيات والمستخدمين" icon="Users" color="emerald" />
+                        <QuickAction href="/admin/sales" title="سجل المبيعات" subtitle="مراجعة العمليات" icon="ArrowRight" color="slate" />
                     </div>
                 </div>
 
                 {/* Right: Activity/Stats */}
                 <div className="xl:col-span-1 space-y-8">
-                    <div className="glass dark:glass-dark p-8 rounded-[2.5rem] shadow-premium h-full flex flex-col">
-                        <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-6">نشاط المتجر</h3>
-                        <div className="space-y-6 flex-1">
-                            {recentSales?.map((sale) => (
-                                <div key={sale.id} className="flex gap-4 items-start group cursor-pointer">
-                                    <div className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-white transition-all shadow-sm">
-                                        <ShoppingBag className="w-5 h-5" />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
-                                            {sale.product_name || "منتج غير معروف"}
-                                        </p>
-                                        <p className="text-xs text-slate-500 font-medium whitespace-nowrap overflow-hidden text-ellipsis">
-                                            {new Date(sale.created_at).toLocaleTimeString('ar-MA', { hour: '2-digit', minute: '2-digit' })} • {sale.stores?.name}
-                                        </p>
-                                    </div>
-                                    <div className="text-xs font-black text-emerald-600 shrink-0">
-                                        +{sale.total_price.toLocaleString()} DH
-                                    </div>
-                                </div>
-                            ))}
-                            {(!recentSales || recentSales.length === 0) && (
-                                <p className="text-center text-slate-400 py-10 font-bold">لا يوجد مبيعات اليوم</p>
-                            )}
-                        </div>
-                        <Button variant="ghost" className="w-full mt-8 rounded-2xl h-12 font-black text-primary hover:bg-primary/5">
-                            مشاهدة الكل
-                            <ArrowRight className="w-4 h-4 mr-2" />
-                        </Button>
-                    </div>
+                    <Suspense fallback={<ActivitySidebarSkeleton />}>
+                        <ActivitySidebarData />
+                    </Suspense>
                 </div>
             </div>
         </div>
     );
 }
 
-function KPICard({ title, value, icon: Icon, trend, color }: any) {
-    const colors = {
-        indigo: "from-indigo-500 to-violet-600 shadow-indigo-200 dark:shadow-none",
-        emerald: "from-emerald-500 to-teal-600 shadow-emerald-200 dark:shadow-none",
-        rose: "from-rose-500 to-pink-600 shadow-rose-200 dark:shadow-none",
-        amber: "from-amber-500 to-orange-600 shadow-amber-200 dark:shadow-none",
-        slate: "from-slate-600 to-slate-800 shadow-slate-200 dark:shadow-none",
-    };
+// --- DATA FETCHING SUB-COMPONENTS ---
+
+async function KPICardsData() {
+    const supabase = await createClient();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const [salesResult, lowStockResult, productsResult] = await Promise.all([
+        supabase.from("sales").select("total_price, profit").eq("status", "active").gte("created_at", today.toISOString()).lt("created_at", tomorrow.toISOString()),
+        supabase.from("products").select("*", { count: 'exact', head: true }).lt("stock", 5),
+        supabase.from("products").select("*", { count: 'exact', head: true })
+    ]);
+
+    const totalSalesToday = salesResult.data?.reduce((sum, s) => sum + (s.total_price || 0), 0) || 0;
+    const totalProfitToday = salesResult.data?.reduce((sum, s) => sum + (s.profit || 0), 0) || 0;
 
     return (
-        <div className="glass dark:glass-dark p-6 rounded-[2rem] shadow-premium group relative overflow-hidden transition-all hover:-translate-y-1 active:scale-[0.98]">
-            {/* Background Accent */}
-            <div className={cn("absolute -top-12 -right-12 w-32 h-32 bg-gradient-to-br opacity-5 rounded-full blur-2xl group-hover:opacity-10 transition-opacity", colors[color as keyof typeof colors])} />
-
-            <div className="relative flex items-center justify-between mb-4">
-                <div className={cn("w-14 h-14 rounded-2xl bg-gradient-to-br flex items-center justify-center text-white shadow-lg", colors[color as keyof typeof colors])}>
-                    <Icon className="w-7 h-7" />
-                </div>
-                <div className="text-right">
-                    <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{title}</p>
-                    <h3 className="text-2xl font-black mt-1 text-slate-900 dark:text-white tracking-tight">{value}</h3>
-                </div>
-            </div>
-            <div className="text-xs font-bold text-slate-500 flex items-center gap-1.5 px-1">
-                <span className={cn("w-2 h-2 rounded-full", {
-                    "bg-indigo-500": color === 'indigo',
-                    "bg-emerald-500": color === 'emerald',
-                    "bg-rose-500": color === 'rose',
-                    "bg-amber-500": color === "amber",
-                    "bg-slate-500": color === "slate"
-                })} />
-                {trend}
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <KPICard title="مبيعات اليوم" value={totalSalesToday} icon="DollarSign" trend="إجمالي المحصلة" color="indigo" isCurrency />
+            <KPICard title="صافي الأرباح" value={totalProfitToday} icon="TrendingUp" trend="أرباح اليوم" color="emerald" isCurrency />
+            <KPICard title="نواقص المخزون" value={lowStockResult.count || 0} icon="AlertTriangle" trend="تحتاج لإعادة ملء" color={lowStockResult.count && lowStockResult.count > 0 ? "rose" : "slate"} />
+            <KPICard title="إجمالي المنتجات" value={productsResult.count || 0} icon="ShoppingBag" trend="في المستودع" color="amber" />
         </div>
     );
 }
 
-function QuickAction({ href, title, subtitle, icon: Icon, color }: any) {
-    const colorClasses = {
-        indigo: "bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400 group-hover:bg-indigo-600 group-hover:text-white",
-        emerald: "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white",
-        slate: "bg-slate-50 text-slate-600 dark:bg-slate-500/10 dark:text-slate-400 group-hover:bg-slate-900 group-hover:text-white",
-    };
+async function PerformanceChartData() {
+    const supabase = await createClient();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(today.getDate() - 6);
 
-    return (
-        <Link
-            href={href}
-            className="group flex flex-col items-center text-center gap-4 p-8 glass dark:glass-dark rounded-[2rem] shadow-premium hover:shadow-2xl hover:-translate-y-1 transition-all"
-        >
-            <div className={cn("w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-sm", colorClasses[color as keyof typeof colorClasses])}>
-                <Icon className="w-8 h-8" />
-            </div>
-            <div>
-                <h4 className="font-black text-lg text-slate-900 dark:text-white group-hover:text-primary transition-colors">{title}</h4>
-                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">{subtitle}</p>
-            </div>
-        </Link>
-    );
+    const { data: weeklySales } = await supabase
+        .from("sales")
+        .select("total_price, created_at")
+        .eq("status", "active")
+        .gte("created_at", sevenDaysAgo.toISOString());
+
+    const chartData = Array.from({ length: 7 }, (_, i) => {
+        const d = new Date(sevenDaysAgo);
+        d.setDate(d.getDate() + i);
+        const dayLabel = d.toLocaleDateString('ar-MA', { weekday: 'short' });
+        const dateStr = d.toISOString().split('T')[0];
+        const dayTotal = weeklySales?.filter(s => s.created_at.startsWith(dateStr)).reduce((sum, s) => sum + (s.total_price || 0), 0) || 0;
+        return { label: dayLabel, value: dayTotal };
+    });
+
+    const maxWeeklyValue = Math.max(...chartData.map(d => d.value), 100);
+
+    return <PerformanceChart chartData={chartData} maxWeeklyValue={maxWeeklyValue} />;
+}
+
+async function ActivitySidebarData() {
+    const supabase = await createClient();
+    const { data: recentSales } = await supabase
+        .from("sales")
+        .select(`*, stores(name)`)
+        .eq("status", "active")
+        .order("created_at", { ascending: false })
+        .limit(5);
+
+    return <ActivitySidebar recentSales={recentSales} />;
 }

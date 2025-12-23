@@ -1,11 +1,13 @@
 import Link from "next/link";
-import { LayoutDashboard, Store, Users, ShoppingBag, History, FileText } from "lucide-react";
+import { LayoutDashboard, Store, Users, ShoppingBag, History, FileText, CreditCard } from "lucide-react";
+import { OverdueBadge } from "./overdue-badge";
 
 export const menuItems = [
     { name: "لوحة التحكم", icon: LayoutDashboard, href: "/admin/dashboard" },
     { name: "المتاجر", icon: Store, href: "/admin/stores" },
     { name: "المنتجات", icon: ShoppingBag, href: "/admin/products" },
     { name: "المستخدمين", icon: Users, href: "/admin/users" },
+    { name: "الديون", icon: CreditCard, href: "/admin/debts" },
     { name: "سجل المبيعات", icon: History, href: "/admin/sales" },
     { name: "التقارير", icon: FileText, href: "/admin/reports" },
 ];
@@ -24,6 +26,7 @@ export function AdminSidebar() {
                             <item.icon className="w-5 h-5" />
                         </div>
                         <span className="font-bold tracking-tight">{item.name}</span>
+                        {item.name === "الديون" && <OverdueBadge />}
                     </Link>
                 ))}
             </div>

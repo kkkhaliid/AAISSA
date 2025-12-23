@@ -8,10 +8,6 @@ export async function updateSession(request: NextRequest) {
         },
     });
 
-    console.log("Middleware Env Check:");
-    console.log("URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
-    console.log("Key:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? "Exists" : "Missing");
-
     const supabase = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,

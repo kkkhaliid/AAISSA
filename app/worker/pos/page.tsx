@@ -20,7 +20,7 @@ export default async function POSPage() {
     // though RLS/Select limits what we see. We map to safe object).
     const { data: products } = await supabase
         .from("products")
-        .select("id, stock, min_sell_price, max_sell_price, product_templates(name, barcode, image_url)")
+        .select("id, stock, min_sell_price, max_sell_price, product_templates(name, barcode, image_url, description)")
         .eq('store_id', profile.store_id)
         .gt('stock', 0);
 

@@ -5,6 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function downloadJson(data: any, fileName: string) {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
@@ -17,6 +18,7 @@ export function downloadJson(data: any, fileName: string) {
   URL.revokeObjectURL(url);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function readJsonFile(file: File): Promise<any> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

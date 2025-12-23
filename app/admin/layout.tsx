@@ -2,6 +2,7 @@ import { AdminSidebar } from "@/components/admin/sidebar";
 import { MobileNav } from "@/components/admin/mobile-nav";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/utils/supabase/server";
+import { NotificationBell } from "@/components/admin/notification-bell";
 import { LogOut } from "lucide-react";
 import { redirect } from "next/navigation";
 
@@ -30,20 +31,27 @@ export default async function AdminLayout({
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900" dir="rtl">
             {/* Header */}
-            <header className="h-20 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-200/50 dark:border-white/5 fixed top-0 right-0 left-0 z-[60] flex items-center justify-between px-6 md:px-10 transition-all duration-300">
+            <header className="h-24 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-200/50 dark:border-white/5 fixed top-0 right-0 left-0 z-[60] flex items-center justify-between px-6 md:px-10 transition-all duration-300">
                 <div className="flex items-center gap-4 md:gap-6">
                     <MobileNav signOutAction={signOut} />
                     <div className="flex flex-col">
-                        <span className="font-black text-2xl md:text-3xl text-slate-900 dark:text-white tracking-tighter leading-none">AissaPhone</span>
-                        <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mt-1 hidden md:block">لوحة التحكم الإدارية</span>
+                        <span className="font-black text-2xl md:text-4xl text-slate-900 dark:text-white tracking-tighter leading-none">AissaPhone</span>
+                        <span className="text-[10px] font-black text-primary uppercase tracking-[0.4em] mt-1.5 hidden md:block">لوحة التحكم الإدارية</span>
                     </div>
                 </div>
-                <div className="hidden md:block">
-                    <form action={signOut}>
-                        <Button variant="ghost" size="icon" className="w-12 h-12 rounded-2xl text-rose-500 hover:text-white hover:bg-rose-500 transition-all active:scale-95 shadow-sm hover:shadow-rose-200 dark:hover:shadow-none">
-                            <LogOut className="w-6 h-6" />
-                        </Button>
-                    </form>
+
+                <div className="flex items-center gap-4">
+                    <div className="hidden md:flex items-center gap-3">
+                        <NotificationBell />
+
+                        <div className="w-px h-8 bg-slate-200 dark:bg-white/10 mx-2" />
+
+                        <form action={signOut}>
+                            <Button variant="ghost" size="icon" className="w-12 h-12 rounded-2xl text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all active:scale-95 group">
+                                <LogOut className="w-6 h-6 transition-transform group-hover:rotate-12" />
+                            </Button>
+                        </form>
+                    </div>
                 </div>
             </header>
 

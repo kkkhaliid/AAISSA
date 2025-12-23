@@ -154,114 +154,110 @@ export function ProductsManager({ products, stores }: { products: Product[], sto
             />
 
             {/* Content Table */}
-            <div className="glass dark:glass-dark rounded-[2.5rem] shadow-premium border-0 overflow-hidden relative group/table">
-                <div className="overflow-x-auto scrollbar-hide">
-                    <Table className="min-w-[900px]">
-                        <TableHeader className="bg-slate-50/50 dark:bg-slate-800/30">
-                            <TableRow className="hover:bg-transparent border-slate-100 dark:border-white/5 h-16">
-                                <TableHead className="text-right px-8 font-black text-slate-500 uppercase tracking-widest text-[10px]">المنتج التفاصيل</TableHead>
-                                <TableHead className="text-right font-black text-slate-500 uppercase tracking-widest text-[10px]">المتاجر المتواجد بها</TableHead>
-                                <TableHead className="text-center font-black text-slate-500 uppercase tracking-widest text-[10px]">المخزون الكلي</TableHead>
-                                <TableHead className="text-right font-black text-slate-500 uppercase tracking-widest text-[10px]">سعر التكلفة</TableHead>
-                                <TableHead className="text-right font-black text-slate-500 uppercase tracking-widest text-[10px]">سعر البيع</TableHead>
-                                <TableHead className="w-[120px] px-8"></TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {filteredProducts.map((product) => {
-                                const isLowStock = product.total_stock < 5;
-
-                                return (
-                                    <TableRow key={product.template_id} className="group hover:bg-slate-50/50 dark:hover:bg-slate-800/30 border-slate-50 dark:border-white/5 transition-all h-20">
-                                        <TableCell className="px-8">
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-14 h-14 rounded-2xl bg-white dark:bg-slate-700 shadow-sm border border-slate-100 dark:border-white/10 flex items-center justify-center text-slate-300 overflow-hidden shrink-0 group-hover:scale-105 transition-transform">
-                                                    {product.product_templates?.image_url ? (
-                                                        <img src={product.product_templates.image_url} alt={product.product_templates.name} className="w-full h-full object-cover" />
-                                                    ) : (
-                                                        <Package className="w-6 h-6" />
-                                                    )}
-                                                </div>
-                                                <div className="min-w-0 text-right">
-                                                    <div className="font-black text-slate-900 dark:text-white truncate text-lg">{product.product_templates?.name}</div>
-                                                    {product.product_templates?.barcode && (
-                                                        <div className="text-[10px] text-slate-400 font-black tracking-widest mt-1 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full inline-block">
-                                                            ID: {product.product_templates.barcode}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <div className="flex flex-wrap gap-2 justify-end">
-                                                {product.store_names.map((name: string, i: number) => (
-                                                    <span key={i} className="bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 px-3 py-1 rounded-xl text-xs font-black border border-indigo-100 dark:border-indigo-500/20 shadow-sm">
-                                                        {name}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="text-center">
-                                            <div className={cn(
-                                                "inline-flex items-center px-4 py-1.5 rounded-full text-xs font-black shadow-sm",
-                                                isLowStock ? "bg-rose-50 text-rose-600 border border-rose-100" : "bg-emerald-50 text-emerald-600 border border-emerald-100"
-                                            )}>
-                                                {isLowStock && <AlertCircle className="w-3.5 h-3.5 ml-1.5 animate-pulse" />}
-                                                {product.total_stock} <span className="mr-1 opacity-70">قطعة</span>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            <div className="font-mono text-sm font-bold text-slate-500 dark:text-slate-400">
-                                                {product.buy_price.toFixed(2)} <span className="text-[10px]">DH</span>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            <div className="flex flex-col items-end">
-                                                <span className="font-black text-indigo-600 dark:text-indigo-400 text-lg">
-                                                    {product.min_sell_price} <span className="text-xs">DH</span>
-                                                </span>
-                                                <span className="text-[10px] text-slate-400 font-bold -mt-1">أقل سعر</span>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="px-8">
-                                            <div className="flex items-center justify-end gap-2 px-1">
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-10 w-10 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-xl transition-all"
-                                                    onClick={() => openEdit(product)}
-                                                >
-                                                    <Edit2 className="w-5 h-5" />
-                                                </Button>
-                                                <ActionIconButton
-                                                    action={deleteProduct}
-                                                    id={product.id}
-                                                    className="w-10 h-10 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl transition-all"
-                                                >
-                                                    <Trash2 className="w-5 h-5" />
-                                                </ActionIconButton>
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-                                );
-                            })}
-
-                            {filteredProducts.length === 0 && (
-                                <TableRow>
-                                    <TableCell colSpan={6} className="h-96 text-center">
-                                        <div className="flex flex-col items-center justify-center text-slate-400">
-                                            <div className="w-24 h-24 bg-slate-50 dark:bg-slate-800 rounded-[2rem] flex items-center justify-center mb-6 shadow-sm">
-                                                <Search className="w-12 h-12 text-slate-300" />
-                                            </div>
-                                            <p className="font-black text-2xl text-slate-900 dark:text-white">لا توجد نتائج</p>
-                                            <p className="text-slate-500 font-medium mt-2">جرب البحث بكلمات مختلفة أو إضافة منتج جديد</p>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
+            {/* Products List - Floating Card Rows */}
+            <div className="space-y-4">
+                {/* Custom Card Header - Only visible on desktop */}
+                <div className="grid grid-cols-6 px-10 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 hidden md:grid">
+                    <div className="col-span-2 pr-4">المنتج والتفاصيل</div>
+                    <div>المتاجر المتواجد بها</div>
+                    <div className="text-center">المخزون الكلي</div>
+                    <div className="text-right">سعر البيع</div>
+                    <div className="text-left">الإجراءات</div>
                 </div>
+
+                {filteredProducts.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-32 text-slate-400">
+                        <div className="w-24 h-24 bg-slate-50 dark:bg-slate-800 rounded-[2.5rem] flex items-center justify-center mb-6 shadow-sm">
+                            <Search className="w-12 h-12 text-slate-300" />
+                        </div>
+                        <p className="font-black text-2xl text-slate-900 dark:text-white">لا توجد نتائج</p>
+                        <p className="text-slate-500 font-medium mt-2">جرب البحث بكلمات مختلفة أو إضافة منتج جديد</p>
+                    </div>
+                ) : (
+                    filteredProducts.map((product) => {
+                        const isLowStock = product.total_stock < 5;
+
+                        return (
+                            <div
+                                key={product.template_id}
+                                className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center bg-white dark:bg-slate-900 p-6 md:p-4 md:px-10 rounded-[2.5rem] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ring-1 ring-black/5 dark:ring-white/5 group active:scale-[0.99]"
+                            >
+                                {/* Product Info */}
+                                <div className="col-span-2 flex items-center gap-5">
+                                    <div className="w-20 h-20 rounded-[1.5rem] bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-300 overflow-hidden shrink-0 shadow-inner ring-1 ring-black/5 dark:ring-white/5 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-2">
+                                        {product.product_templates?.image_url ? (
+                                            <img src={product.product_templates.image_url} alt={product.product_templates.name} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <Package className="w-10 h-10" />
+                                        )}
+                                    </div>
+                                    <div className="min-w-0">
+                                        <div className="font-black text-slate-900 dark:text-white text-xl tracking-tight truncate">{product.product_templates?.name}</div>
+                                        {product.product_templates?.barcode && (
+                                            <div className="flex items-center gap-2 mt-1.5">
+                                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">
+                                                    ID: {product.product_templates.barcode}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Stores List */}
+                                <div className="flex flex-wrap gap-2">
+                                    {product.store_names.map((name: string, i: number) => (
+                                        <div key={i} className="flex items-center gap-1.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border border-indigo-100 dark:border-indigo-500/20">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                                            {name}
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Stock Info */}
+                                <div className="flex justify-center">
+                                    <div className={cn(
+                                        "inline-flex flex-col items-center px-6 py-3 rounded-2xl shadow-sm transition-all duration-300 group-hover:scale-105",
+                                        isLowStock
+                                            ? "bg-rose-50 dark:bg-rose-500/10 text-rose-600 border border-rose-100 dark:border-rose-500/20 shadow-rose-200/20"
+                                            : "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 border border-emerald-100 dark:border-emerald-500/20 shadow-emerald-200/20"
+                                    )}>
+                                        <div className="text-2xl font-black tabular-nums">{product.total_stock}</div>
+                                        <div className="text-[10px] font-black uppercase tracking-widest opacity-70">قطعة متوفرة</div>
+                                    </div>
+                                </div>
+
+                                {/* Price Info */}
+                                <div className="text-right">
+                                    <div className="flex flex-col items-end">
+                                        <div className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">
+                                            {product.min_sell_price} <span className="text-xs font-bold mr-1">DH</span>
+                                        </div>
+                                        <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">تبدأ من</div>
+                                    </div>
+                                </div>
+
+                                {/* Actions */}
+                                <div className="flex justify-end items-center gap-2">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-12 w-12 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-slate-400 hover:text-primary"
+                                        onClick={() => openEdit(product)}
+                                    >
+                                        <Edit2 className="w-5 h-5" />
+                                    </Button>
+                                    <ActionIconButton
+                                        action={deleteProduct}
+                                        id={product.id}
+                                        className="w-12 h-12 rounded-2xl hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all text-slate-400 hover:text-rose-600"
+                                    >
+                                        <Trash2 className="w-5 h-5" />
+                                    </ActionIconButton>
+                                </div>
+                            </div>
+                        );
+                    })
+                )}
             </div>
         </div>
     );

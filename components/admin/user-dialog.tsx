@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Copy, UserCheck, Edit2 } from "lucide-react";
+import { Plus, Copy, UserCheck, Edit2, X } from "lucide-react";
 import { createWorker, updateWorker } from "@/app/admin/actions";
 import { toast } from "sonner";
 
@@ -106,106 +106,139 @@ export function UserDialog({ stores, onSuccess, user, open: externalOpen, onOpen
                 </DialogTrigger>
             )}
 
-            <DialogContent className="max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border-0 shadow-2xl rounded-[3.5rem] p-0 overflow-hidden" dir="rtl">
+            <DialogContent className="max-w-[80vw] sm:max-w-[80vw] w-full h-[70vh] max-h-[800px] flex flex-col p-0 gap-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl overflow-hidden rounded-2xl border-0 ring-1 ring-slate-200/50 dark:ring-slate-700/50 shadow-2xl transition-all duration-300 [&>button]:hidden text-right" dir="rtl">
                 {!successData ? (
-                    <form action={handleSubmit}>
-                        <div className="p-10 space-y-10">
-                            <DialogHeader>
-                                <DialogTitle className="text-3xl font-black text-slate-900 dark:text-white text-right">
-                                    {isEdit ? "تعديل البيانات" : "عضو فريق جديد"}
+                    <form action={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+                        {/* Header */}
+                        <DialogHeader className="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex flex-row items-center justify-between bg-gradient-to-l from-slate-50/50 via-white/50 to-slate-50/50 dark:from-slate-900/50 dark:via-slate-900/80 dark:to-slate-900/50 shrink-0 z-20">
+                            <div className="flex flex-col gap-1 items-start">
+                                <DialogTitle className="text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
+                                    <div className="p-2.5 rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
+                                        <Plus className="w-6 h-6" />
+                                    </div>
+                                    {isEdit ? "تعديل بيانات العضو" : "إضافة عضو فريق جديد"}
                                 </DialogTitle>
-                                <p className="text-right text-slate-500 font-medium">قم بتعبئة بيانات الدخول للموظف</p>
-                            </DialogHeader>
+                                <p className="text-slate-500 font-medium text-sm">قم بتعبئة بيانات الدخول والتعيين للموظف</p>
+                            </div>
 
-                            <div className="space-y-6">
-                                <div className="space-y-3">
-                                    <Label className="text-right block font-black text-slate-400 uppercase tracking-widest text-[10px]">الاسم الكامل</Label>
-                                    <Input
-                                        id="full_name"
-                                        name="full_name"
-                                        required
-                                        defaultValue={user?.full_name}
-                                        placeholder="مثال: يوسف العلوي"
-                                        className="h-14 text-lg font-bold text-right border-0 bg-slate-50 dark:bg-slate-800/50 rounded-2xl shadow-inner focus-visible:ring-primary/20"
-                                    />
-                                </div>
-                                <div className="space-y-3">
-                                    <Label className="text-right block font-black text-slate-400 uppercase tracking-widest text-[10px]">البريد الإلكتروني</Label>
-                                    <Input
-                                        id="email"
-                                        name="email"
-                                        type="email"
-                                        required
-                                        defaultValue={user?.email}
-                                        placeholder="worker@aissaphone.com"
-                                        className="h-14 text-lg font-bold text-left border-0 bg-slate-50 dark:bg-slate-800/50 rounded-2xl shadow-inner focus-visible:ring-primary/20"
-                                    />
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-3">
-                                        <Label className="text-right block font-black text-slate-400 uppercase tracking-widest text-[10px]">كلمة المرور</Label>
-                                        <Input
-                                            id="password"
-                                            name="password"
-                                            type="text"
-                                            required={!isEdit}
-                                            defaultValue={isEdit ? "" : "123456"}
-                                            placeholder={isEdit ? "اتركه فارغاً للحفظ" : "كلمة سر مؤقتة"}
-                                            className="h-14 font-mono font-black text-center border-0 bg-slate-50 dark:bg-slate-800/50 rounded-2xl shadow-inner focus-visible:ring-primary/20 text-primary"
-                                        />
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={handleClose}
+                                className="rounded-full w-10 h-10 bg-slate-100 dark:bg-slate-800 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-colors"
+                            >
+                                <X className="w-5 h-5" />
+                            </Button>
+                        </DialogHeader>
+
+                        {/* Body - Scrollable */}
+                        <div className="flex-1 overflow-y-auto p-10 space-y-10 custom-scrollbar">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                {/* Basic Info */}
+                                <div className="space-y-6">
+                                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">البيانات الأساسية</h3>
+
+                                    <div className="space-y-4">
+                                        <div className="space-y-2">
+                                            <Label className="text-slate-500 font-bold text-xs mr-1">الاسم الكامل</Label>
+                                            <Input
+                                                id="full_name"
+                                                name="full_name"
+                                                required
+                                                defaultValue={user?.full_name}
+                                                placeholder="مثال: يوسف العلوي"
+                                                className="h-14 text-lg font-bold text-right border-0 bg-slate-50 dark:bg-slate-800/50 rounded-2xl shadow-inner focus-visible:ring-primary/20"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label className="text-slate-500 font-bold text-xs mr-1">البريد الإلكتروني</Label>
+                                            <Input
+                                                id="email"
+                                                name="email"
+                                                type="email"
+                                                required
+                                                defaultValue={user?.email}
+                                                placeholder="worker@aissaphone.com"
+                                                className="h-14 text-lg font-bold text-left border-0 bg-slate-50 dark:bg-slate-800/50 rounded-2xl shadow-inner focus-visible:ring-primary/20"
+                                                dir="ltr"
+                                            />
+                                        </div>
                                     </div>
-                                    <div className="space-y-3">
-                                        <Label className="text-right block font-black text-slate-400 uppercase tracking-widest text-[10px]">المتجر المعين</Label>
-                                        <Select value={selectedStore} onValueChange={setSelectedStore} required>
-                                            <SelectTrigger className="h-14 rounded-2xl border-0 bg-slate-50 dark:bg-slate-800/50 shadow-inner font-bold text-right">
-                                                <SelectValue placeholder="اختر الفرع..." />
-                                            </SelectTrigger>
-                                            <SelectContent className="rounded-2xl border-0 shadow-2xl">
-                                                {stores.map(store => (
-                                                    <SelectItem key={store.id} value={store.id} className="rounded-xl font-bold">{store.name}</SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
+                                </div>
+
+                                {/* Security & Assignment */}
+                                <div className="space-y-6">
+                                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">الأمان والتعيين</h3>
+
+                                    <div className="space-y-4">
+                                        <div className="space-y-2">
+                                            <Label className="text-slate-500 font-bold text-xs mr-1">كلمة المرور</Label>
+                                            <Input
+                                                id="password"
+                                                name="password"
+                                                type="text"
+                                                required={!isEdit}
+                                                defaultValue={isEdit ? "" : "123456"}
+                                                placeholder={isEdit ? "اتركه فارغاً للحفظ" : "كلمة سر مؤقتة"}
+                                                className="h-14 font-mono font-black text-center border-0 bg-slate-50 dark:bg-slate-800/50 rounded-2xl shadow-inner focus-visible:ring-primary/20 text-primary"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label className="text-slate-500 font-bold text-xs mr-1">المتجر المعين</Label>
+                                            <Select value={selectedStore} onValueChange={setSelectedStore} required>
+                                                <SelectTrigger className="h-14 rounded-2xl border-0 bg-slate-50 dark:bg-slate-800/50 shadow-inner font-bold text-right">
+                                                    <SelectValue placeholder="اختر الفرع..." />
+                                                </SelectTrigger>
+                                                <SelectContent className="rounded-2xl border-slate-100 dark:border-slate-800 shadow-2xl">
+                                                    {stores.map(store => (
+                                                        <SelectItem key={store.id} value={store.id} className="rounded-xl font-bold">{store.name}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <div className="flex flex-col gap-4">
-                                <Button type="submit" disabled={loading} className="w-full h-18 rounded-3xl gradient-primary text-xl font-black shadow-xl border-0 text-white transition-all active:scale-[0.98]">
-                                    {loading ? "جاري المعالجة..." : (isEdit ? "حفظ التغييرات" : "تفعيل الحساب")}
-                                </Button>
-                                <Button type="button" variant="ghost" className="w-full h-14 rounded-2xl font-black text-slate-400" onClick={handleClose}>
-                                    إلغاء
-                                </Button>
-                            </div>
+                        {/* Footer - Sticky */}
+                        <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md flex flex-row items-center justify-end gap-3 shrink-0 z-20">
+                            <Button type="button" variant="ghost" className="h-12 px-6 rounded-xl font-bold text-slate-500 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800" onClick={handleClose}>
+                                إلغاء
+                            </Button>
+                            <Button type="submit" disabled={loading} className="h-12 px-8 rounded-xl bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 text-lg font-bold shadow-lg shadow-slate-900/10 text-white transition-all hover:scale-[1.02] active:scale-[0.98]">
+                                {loading ? "جاري المعالجة..." : (isEdit ? "حفظ التغييرات" : "تفعيل الحساب")}
+                            </Button>
                         </div>
                     </form>
                 ) : (
-                    <div className="flex flex-col p-10 text-center animate-in zoom-in-95 duration-500">
-                        <div className="w-24 h-24 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 rounded-[2.5rem] flex items-center justify-center mb-8 mx-auto shadow-sm">
+                    <div className="flex-1 flex flex-col items-center justify-center p-10 text-center animate-in zoom-in-95 duration-500 overflow-y-auto">
+                        <div className="w-24 h-24 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 rounded-[2.5rem] flex items-center justify-center mb-8 mx-auto shadow-sm ring-1 ring-emerald-500/20">
                             <UserCheck className="w-12 h-12" />
                         </div>
-                        <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-2">الحساب جاهز!</h2>
-                        <p className="text-slate-500 font-medium mb-10 max-w-[280px] mx-auto leading-relaxed">
-                            قم بمشاركة بيانات الدخول التالية مع الموظف الجديد
+                        <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">الحساب جاهز!</h2>
+                        <p className="text-slate-500 font-medium mb-10 max-w-[320px] mx-auto leading-relaxed">
+                            تم إنشاء حساب الموظف بنجاح. شارك بيانات الدخول التالية معه:
                         </p>
 
-                        <div className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-white/5 rounded-[2.5rem] p-8 text-right space-y-6 mb-10 relative group shadow-inner">
-                            <div>
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">الاسم الكامل</span>
-                                <div className="text-xl font-black text-slate-900 dark:text-white">{successData.name}</div>
+                        <div className="w-full max-w-lg bg-slate-50 dark:bg-slate-800/10 border border-slate-100 dark:border-white/5 rounded-[2.5rem] p-10 text-right space-y-8 mb-10 relative group shadow-inner">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div>
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">الاسم الكامل</span>
+                                    <div className="text-xl font-black text-slate-900 dark:text-white">{successData.name}</div>
+                                </div>
+                                <div>
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">البريد الإلكتروني</span>
+                                    <div className="text-lg font-mono font-bold text-slate-700 dark:text-slate-300 select-all">{successData.email}</div>
+                                </div>
                             </div>
-                            <div className="h-px bg-slate-200 dark:bg-white/5" />
-                            <div>
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">البريد الإلكتروني</span>
-                                <div className="text-lg font-mono font-bold text-slate-700 dark:text-slate-300 select-all">{successData.email}</div>
-                            </div>
+
                             {successData.password && (
                                 <>
                                     <div className="h-px bg-slate-200 dark:bg-white/5" />
                                     <div>
-                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">كلمة المرور</span>
-                                        <div className="text-3xl font-mono font-black text-primary select-all tracking-widest">{successData.password}</div>
+                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">كلمة المرور المؤقتة</span>
+                                        <div className="text-4xl font-mono font-black text-primary select-all tracking-widest">{successData.password}</div>
                                     </div>
                                 </>
                             )}
@@ -213,15 +246,15 @@ export function UserDialog({ stores, onSuccess, user, open: externalOpen, onOpen
                             <Button
                                 size="icon"
                                 variant="ghost"
-                                className="absolute top-6 left-6 w-12 h-12 rounded-2xl hover:bg-white dark:hover:bg-slate-800 shadow-sm transition-all active:scale-95"
+                                className="absolute top-6 left-6 w-12 h-12 rounded-2xl hover:bg-white dark:hover:bg-slate-800 shadow-sm transition-all active:scale-95 border border-slate-100 dark:border-white/5"
                                 onClick={copyToClipboard}
                             >
                                 <Copy className="w-5 h-5 text-slate-400" />
                             </Button>
                         </div>
 
-                        <Button onClick={handleClose} className="w-full h-18 rounded-3xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xl font-black shadow-xl border-0 transition-all active:scale-[0.98]">
-                            تم
+                        <Button onClick={handleClose} className="min-w-[200px] h-14 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xl font-black shadow-xl border-0 transition-all active:scale-[0.98]">
+                            تم، إغلاق النافذة
                         </Button>
                     </div>
                 )}
