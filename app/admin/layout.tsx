@@ -32,11 +32,11 @@ export default async function AdminLayout({
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900" dir="rtl">
             {/* Header */}
             <header className="h-24 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-200/50 dark:border-white/5 fixed top-0 right-0 left-0 z-[60] flex items-center justify-between px-6 md:px-10 transition-all duration-300">
-                <div className="flex items-center gap-4 md:gap-6">
+                <div className="flex items-center gap-3">
                     <MobileNav signOutAction={signOut} />
                     <div className="flex flex-col">
-                        <span className="font-black text-2xl md:text-4xl text-slate-900 dark:text-white tracking-tighter leading-none">AissaPhone</span>
-                        <span className="text-[10px] font-black text-primary uppercase tracking-[0.4em] mt-1.5 hidden md:block">لوحة التحكم الإدارية</span>
+                        <span className="font-black text-xl md:text-3xl text-slate-900 dark:text-white tracking-tighter leading-none">AissaPhone</span>
+                        <span className="text-[10px] font-black text-primary uppercase tracking-[0.4em] mt-1 hidden md:block">لوحة التحكم الإدارية</span>
                     </div>
                 </div>
 
@@ -59,8 +59,8 @@ export default async function AdminLayout({
             <AdminSidebar />
 
             {/* Main Content */}
-            <main className="pt-30 pr-0 md:pr-64 px-6 md:px-10 pb-24 md:pb-12 min-h-screen">
-                <div className="max-w-7xl mx-auto">
+            <main className="pt-24 min-h-screen">
+                <div className="pr-0 md:pr-64 px-4 md:px-10 pb-24 md:pb-12 max-w-7xl mx-auto">
                     {children}
                 </div>
             </main>

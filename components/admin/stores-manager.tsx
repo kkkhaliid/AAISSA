@@ -49,9 +49,9 @@ export function StoresManager({ stores }: { stores: Store[] }) {
     return (
         <div className="space-y-10 max-w-7xl mx-auto" dir="rtl">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4 md:px-0">
                 <div>
-                    <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white">إدارة المتاجر</h1>
+                    <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">إدارة المتاجر</h1>
                     <p className="text-slate-500 font-medium mt-2">قم بإضافة وتعديل فروع متجرك</p>
                 </div>
                 <Button onClick={openAdd} className="gap-3 h-14 px-8 rounded-2xl gradient-primary shadow-xl shadow-indigo-200 dark:shadow-none font-black text-lg active:scale-95 transition-all text-white border-0">
@@ -62,17 +62,17 @@ export function StoresManager({ stores }: { stores: Store[] }) {
 
             {/* Content - Modern Grid of Cards */}
             {/* Content - Modern Grid of Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 px-4 md:px-0">
                 {stores.map((store) => (
-                    <div key={store.id} className="group relative glass dark:glass-dark p-10 rounded-[3.5rem] shadow-premium hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden border-0 ring-1 ring-white/20 dark:ring-white/5">
+                    <div key={store.id} className="group relative glass dark:glass-dark p-6 md:p-10 rounded-3xl md:rounded-[3.5rem] shadow-premium hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden border-0 ring-1 ring-white/20 dark:ring-white/5">
                         {/* Dynamic Gradient Background */}
                         <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 rounded-full blur-[80px] group-hover:bg-primary/20 transition-all duration-700" />
                         <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-violet-500/10 rounded-full blur-[80px] group-hover:bg-violet-500/20 transition-all duration-700" />
 
                         <div className="relative z-10">
                             <div className="flex justify-between items-start mb-10">
-                                <div className="w-20 h-20 rounded-[2rem] bg-gradient-to-br from-primary/10 to-indigo-500/5 dark:from-primary/20 dark:to-indigo-500/10 text-primary flex items-center justify-center shadow-inner group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 ring-1 ring-primary/20">
-                                    <Building2 className="w-10 h-10" />
+                                <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl md:rounded-[2rem] bg-gradient-to-br from-primary/10 to-indigo-500/5 dark:from-primary/20 dark:to-indigo-500/10 text-primary flex items-center justify-center shadow-inner group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 ring-1 ring-primary/20">
+                                    <Building2 className="w-8 h-8 md:w-10 md:h-10" />
                                 </div>
                                 <div className="flex gap-2">
                                     <Button variant="ghost" size="icon" onClick={() => openEdit(store)} className="h-12 w-12 text-slate-400 hover:text-primary hover:bg-white dark:hover:bg-slate-800 rounded-2xl shadow-sm transition-all border border-transparent hover:border-slate-100">
@@ -134,7 +134,7 @@ export function StoresManager({ stores }: { stores: Store[] }) {
 
             {/* Add/Edit Dialog */}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent className="max-w-[80vw] sm:max-w-[80vw] w-full h-[70vh] max-h-[800px] flex flex-col p-0 gap-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl overflow-hidden rounded-2xl border-0 ring-1 ring-slate-200/50 dark:ring-slate-700/50 shadow-2xl transition-all duration-300 [&>button]:hidden text-right" dir="rtl">
+                <DialogContent className="max-w-[95vw] sm:max-w-[80vw] w-full h-[90vh] md:h-[70vh] max-h-[800px] flex flex-col p-0 gap-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl overflow-hidden rounded-3xl md:rounded-2xl border-0 ring-1 ring-slate-200/50 dark:ring-slate-700/50 shadow-2xl transition-all duration-300 [&>button]:hidden text-right" dir="rtl">
                     <form action={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
                         {/* Header */}
                         <DialogHeader className="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex flex-row items-center justify-between bg-gradient-to-l from-slate-50/50 via-white/50 to-slate-50/50 dark:from-slate-900/50 dark:via-slate-900/80 dark:to-slate-900/50 shrink-0 z-20">
@@ -159,7 +159,7 @@ export function StoresManager({ stores }: { stores: Store[] }) {
                         </DialogHeader>
 
                         {/* Body - Scrollable */}
-                        <div className="flex-1 overflow-y-auto p-10 space-y-10 custom-scrollbar">
+                        <div className="flex-1 overflow-y-auto p-6 md:p-10 space-y-8 md:space-y-10 custom-scrollbar">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                                 <div className="space-y-4">
                                     <Label className="text-slate-500 font-bold text-xs mr-1 uppercase tracking-widest">اسم المتجر</Label>

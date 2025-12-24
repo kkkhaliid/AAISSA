@@ -106,7 +106,7 @@ export function UserDialog({ stores, onSuccess, user, open: externalOpen, onOpen
                 </DialogTrigger>
             )}
 
-            <DialogContent className="max-w-[80vw] sm:max-w-[80vw] w-full h-[70vh] max-h-[800px] flex flex-col p-0 gap-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl overflow-hidden rounded-2xl border-0 ring-1 ring-slate-200/50 dark:ring-slate-700/50 shadow-2xl transition-all duration-300 [&>button]:hidden text-right" dir="rtl">
+            <DialogContent className="max-w-[95vw] sm:max-w-[80vw] w-full h-[90vh] md:h-[70vh] max-h-[800px] flex flex-col p-0 gap-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl overflow-hidden rounded-3xl md:rounded-2xl border-0 ring-1 ring-slate-200/50 dark:ring-slate-700/50 shadow-2xl transition-all duration-300 [&>button]:hidden text-right" dir="rtl">
                 {!successData ? (
                     <form action={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
                         {/* Header */}
@@ -132,7 +132,7 @@ export function UserDialog({ stores, onSuccess, user, open: externalOpen, onOpen
                         </DialogHeader>
 
                         {/* Body - Scrollable */}
-                        <div className="flex-1 overflow-y-auto p-10 space-y-10 custom-scrollbar">
+                        <div className="flex-1 overflow-y-auto p-6 md:p-10 space-y-8 md:space-y-10 custom-scrollbar">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                                 {/* Basic Info */}
                                 <div className="space-y-6">
@@ -246,7 +246,7 @@ export function UserDialog({ stores, onSuccess, user, open: externalOpen, onOpen
                             <Button
                                 size="icon"
                                 variant="ghost"
-                                className="absolute top-6 left-6 w-12 h-12 rounded-2xl hover:bg-white dark:hover:bg-slate-800 shadow-sm transition-all active:scale-95 border border-slate-100 dark:border-white/5"
+                                className="absolute top-4 left-4 md:top-6 md:left-6 w-10 h-10 md:w-12 md:h-12 rounded-2xl hover:bg-white dark:hover:bg-slate-800 shadow-sm transition-all active:scale-95 border border-slate-100 dark:border-white/5"
                                 onClick={copyToClipboard}
                             >
                                 <Copy className="w-5 h-5 text-slate-400" />

@@ -74,7 +74,7 @@ export function DebtDialog({ debt, open: externalOpen, onOpenChange: setExternal
                     </Button>
                 </DialogTrigger>
             )}
-            <DialogContent className="max-w-[80vw] sm:max-w-[80vw] w-full h-[70vh] max-h-[800px] flex flex-col p-0 gap-0 bg-white/95 dark:bg-slate-950/95 backdrop-blur-2xl border-0 ring-1 ring-slate-200/50 dark:ring-slate-700/50 shadow-2xl rounded-2xl overflow-hidden [&>button]:hidden" dir="rtl">
+            <DialogContent className="max-w-[95vw] sm:max-w-[80vw] w-full h-[90vh] md:h-[70vh] max-h-[800px] flex flex-col p-0 gap-0 bg-white/95 dark:bg-slate-950/95 backdrop-blur-2xl border-0 ring-1 ring-slate-200/50 dark:ring-slate-700/50 shadow-2xl rounded-3xl md:rounded-2xl overflow-hidden [&>button]:hidden" dir="rtl">
 
                 {/* Header */}
                 <DialogHeader className="px-8 py-6 border-b border-slate-100 dark:border-slate-800 bg-gradient-to-l from-slate-50/80 via-white/80 to-slate-50/80 dark:from-slate-900/80 dark:via-slate-900/95 dark:to-slate-900/80 flex flex-row items-center justify-between shrink-0 z-20">
@@ -102,7 +102,7 @@ export function DebtDialog({ debt, open: externalOpen, onOpenChange: setExternal
 
                 <form onSubmit={onSubmit} className="flex flex-col flex-1 overflow-hidden">
                     {/* Scrollable Body */}
-                    <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
+                    <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 md:space-y-8 custom-scrollbar">
                         {!isEdit ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 {/* Customer Data Section */}
@@ -253,9 +253,9 @@ export function DebtDialog({ debt, open: externalOpen, onOpenChange: setExternal
                                             required
                                             placeholder="0.00"
                                             autoFocus
-                                            className="h-28 bg-white dark:bg-slate-950 border-2 border-slate-200 dark:border-slate-800 rounded-[2.5rem] shadow-sm text-6xl font-black text-center pr-28 text-emerald-600 focus:ring-8 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all tabular-nums"
+                                            className="h-20 md:h-28 bg-white dark:bg-slate-950 border-2 border-slate-200 dark:border-slate-800 rounded-3xl md:rounded-[2.5rem] shadow-sm text-4xl md:text-6xl font-black text-center md:pr-28 text-emerald-600 focus:ring-8 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all tabular-nums"
                                         />
-                                        <span className="absolute right-12 top-1/2 -translate-y-1/2 text-slate-300 font-black text-2xl tracking-tighter">DH</span>
+                                        <span className="hidden md:block absolute right-12 top-1/2 -translate-y-1/2 text-slate-300 font-black text-2xl tracking-tighter">DH</span>
                                     </div>
                                 </div>
                             </div>
