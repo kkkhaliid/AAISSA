@@ -34,46 +34,46 @@ async function DebtsContent() {
     return (
         <div className="space-y-8">
             {/* Stats Cards - Premium Redesign */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 px-4 md:px-0">
-                <div className="group relative bg-slate-900 dark:bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-8 text-white dark:text-slate-900 shadow-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2">
-                    <div className="absolute -right-8 -top-8 w-32 md:w-48 h-32 md:h-48 bg-white/5 dark:bg-black/5 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-1000" />
-                    <div className="absolute -left-4 footer-gradient w-32 h-32 opacity-20 blur-2xl" />
+            <div className="grid grid-cols-3 gap-2 md:gap-8 px-4 md:px-0">
+                <div className="group relative bg-slate-900 dark:bg-white rounded-xl md:rounded-[3rem] p-2.5 md:p-8 text-white dark:text-slate-900 shadow-2xl overflow-hidden transition-all duration-500 hover:-translate-y-2">
+                    <div className="absolute -right-8 -top-8 w-24 md:w-48 h-24 md:h-48 bg-white/5 dark:bg-black/5 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-1000" />
+                    <div className="absolute -left-4 footer-gradient w-24 md:w-32 h-24 md:h-32 opacity-20 blur-2xl" />
 
-                    <div className="relative z-10 space-y-3 md:space-y-4">
-                        <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-white/10 dark:bg-slate-900/5 flex items-center justify-center backdrop-blur-md ring-1 ring-white/20 dark:ring-black/5">
-                            <Wallet className="w-6 h-6 md:w-7 md:h-7 text-white dark:text-slate-900 opacity-80" />
+                    <div className="relative z-10 space-y-1.5 md:space-y-4">
+                        <div className="w-7 h-7 md:w-14 md:h-14 rounded-md md:rounded-2xl bg-white/10 dark:bg-slate-900/5 flex items-center justify-center backdrop-blur-md ring-1 ring-white/20 dark:ring-black/5">
+                            <Wallet className="w-3.5 h-3.5 md:w-7 md:h-7 text-white dark:text-slate-900 opacity-80" />
                         </div>
                         <div>
-                            <p className="text-slate-400 dark:text-slate-500 font-black uppercase tracking-[0.2em] text-[8px] md:text-[10px]">إجمالي الديون المعلقة</p>
-                            <h3 className="text-2xl md:text-4xl font-black mt-1 tracking-tighter tabular-nums">{stats.total.toLocaleString()} <span className="text-xs md:text-sm font-bold opacity-60">DH</span></h3>
+                            <p className="text-slate-400 dark:text-slate-500 font-black uppercase tracking-tight md:tracking-[0.2em] text-[6px] md:text-[10px] leading-tight">إجمالي الديون</p>
+                            <h3 className="text-sm md:text-4xl font-black mt-0.5 md:mt-1 tracking-tighter tabular-nums leading-tight">{stats.total.toLocaleString()} <span className="text-[7px] md:text-sm font-bold opacity-60">DH</span></h3>
                         </div>
                     </div>
                 </div>
 
-                <div className="group relative bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border border-white dark:border-white/5 rounded-[2rem] md:rounded-[3rem] p-6 md:p-8 shadow-premium overflow-hidden transition-all duration-500 hover:-translate-y-2">
-                    <div className="absolute -right-8 -top-8 w-32 md:w-48 h-32 md:h-48 bg-emerald-500/5 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-1000" />
+                <div className="group relative bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border border-white dark:border-white/5 rounded-xl md:rounded-[3rem] p-2.5 md:p-8 shadow-premium overflow-hidden transition-all duration-500 hover:-translate-y-2">
+                    <div className="absolute -right-8 -top-8 w-24 md:w-48 h-24 md:h-48 bg-emerald-500/5 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-1000" />
 
-                    <div className="relative z-10 space-y-3 md:space-y-4">
-                        <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-emerald-500/10 flex items-center justify-center ring-1 ring-emerald-500/20">
-                            <CreditCard className="w-6 h-6 md:w-7 md:h-7 text-emerald-500" />
+                    <div className="relative z-10 space-y-1.5 md:space-y-4">
+                        <div className="w-7 h-7 md:w-14 md:h-14 rounded-md md:rounded-2xl bg-emerald-500/10 flex items-center justify-center ring-1 ring-emerald-500/20">
+                            <CreditCard className="w-3.5 h-3.5 md:w-7 md:h-7 text-emerald-500" />
                         </div>
                         <div>
-                            <p className="text-slate-400 dark:text-slate-500 font-black uppercase tracking-[0.2em] text-[8px] md:text-[10px]">عدد الحالات النشطة</p>
-                            <h3 className="text-2xl md:text-4xl font-black mt-1 tracking-tighter text-slate-900 dark:text-white tabular-nums">{stats.count} <span className="text-xs md:text-sm font-bold opacity-60 uppercase tracking-tight">عملاء</span></h3>
+                            <p className="text-slate-400 dark:text-slate-500 font-black uppercase tracking-tight md:tracking-[0.2em] text-[6px] md:text-[10px] leading-tight">الحالات النشطة</p>
+                            <h3 className="text-sm md:text-4xl font-black mt-0.5 md:mt-1 tracking-tighter text-slate-900 dark:text-white tabular-nums leading-tight">{stats.count} <span className="text-[7px] md:text-sm font-bold opacity-60 uppercase tracking-tight">عملاء</span></h3>
                         </div>
                     </div>
                 </div>
 
-                <div className="group relative bg-rose-500/5 dark:bg-rose-500/5 backdrop-blur-2xl border border-rose-500/10 rounded-[2rem] md:rounded-[3rem] p-6 md:p-8 shadow-xl overflow-hidden transition-all duration-500 hover:-translate-y-2">
-                    <div className="absolute -right-8 -top-8 w-32 md:w-48 h-32 md:h-48 bg-rose-500/10 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-1000" />
+                <div className="group relative bg-rose-500/5 dark:bg-rose-500/5 backdrop-blur-2xl border border-rose-500/10 rounded-xl md:rounded-[3rem] p-2.5 md:p-8 shadow-xl overflow-hidden transition-all duration-500 hover:-translate-y-2">
+                    <div className="absolute -right-8 -top-8 w-24 md:w-48 h-24 md:h-48 bg-rose-500/10 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-1000" />
 
-                    <div className="relative z-10 space-y-3 md:space-y-4">
-                        <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-rose-500/10 flex items-center justify-center ring-1 ring-rose-500/20">
-                            <AlertCircle className="w-6 h-6 md:w-7 md:h-7 text-rose-500" />
+                    <div className="relative z-10 space-y-1.5 md:space-y-4">
+                        <div className="w-7 h-7 md:w-14 md:h-14 rounded-md md:rounded-2xl bg-rose-500/10 flex items-center justify-center ring-1 ring-rose-500/20">
+                            <AlertCircle className="w-3.5 h-3.5 md:w-7 md:h-7 text-rose-500" />
                         </div>
                         <div>
-                            <p className="text-rose-600/60 dark:text-rose-400/60 font-black uppercase tracking-[0.2em] text-[8px] md:text-[10px]">ديون متأخرة</p>
-                            <h3 className="text-2xl md:text-4xl font-black mt-1 tracking-tighter text-rose-600 tabular-nums">{stats.overdue} <span className="text-xs md:text-sm font-bold opacity-60 uppercase tracking-tight">حالة</span></h3>
+                            <p className="text-rose-600/60 dark:text-rose-400/60 font-black uppercase tracking-tight md:tracking-[0.2em] text-[6px] md:text-[10px] leading-tight">ديون متأخرة</p>
+                            <h3 className="text-sm md:text-4xl font-black mt-0.5 md:mt-1 tracking-tighter text-rose-600 tabular-nums leading-tight">{stats.overdue} <span className="text-[7px] md:text-sm font-bold opacity-60 uppercase tracking-tight">حالة</span></h3>
                         </div>
                     </div>
                 </div>

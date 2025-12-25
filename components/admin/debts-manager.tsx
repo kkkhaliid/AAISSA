@@ -149,49 +149,49 @@ export function DebtsManager({ initialDebts }: DebtsManagerProps) {
                             return (
                                 <div
                                     key={debt.id}
-                                    className="group relative flex flex-col bg-white dark:bg-slate-900 rounded-[2.5rem] p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ring-1 ring-black/5 dark:ring-white/5 overflow-hidden"
+                                    className="group relative flex flex-col bg-white dark:bg-slate-900 rounded-[1.75rem] md:rounded-[2.5rem] p-4 md:p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ring-1 ring-black/5 dark:ring-white/5 overflow-hidden"
                                 >
                                     {/* Urgency Indicator Strip */}
                                     {isOverdue && (
-                                        <div className="absolute top-0 right-0 left-0 h-1.5 bg-rose-500" />
+                                        <div className="absolute top-0 right-0 left-0 h-1 md:h-1.5 bg-rose-500" />
                                     )}
 
                                     {/* Header: Customer */}
-                                    <div className="flex justify-between items-start mb-6">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white flex items-center justify-center font-black text-xl shadow-lg shadow-indigo-500/20 shrink-0">
+                                    <div className="flex justify-between items-start mb-4 md:mb-6">
+                                        <div className="flex items-center gap-2.5 md:gap-4">
+                                            <div className="w-11 h-11 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white flex items-center justify-center font-black text-base md:text-xl shadow-lg shadow-indigo-500/20 shrink-0">
                                                 {debt.customer_name[0].toUpperCase()}
                                             </div>
                                             <div>
-                                                <h3 className="font-black text-lg text-slate-900 dark:text-white leading-tight truncate max-w-[140px] md:max-w-[200px]">
+                                                <h3 className="font-black text-base md:text-lg text-slate-900 dark:text-white leading-tight truncate max-w-[140px] md:max-w-[200px]">
                                                     {debt.customer_name}
                                                 </h3>
-                                                <div className="flex items-center gap-1.5 text-slate-400 font-bold text-xs mt-1">
-                                                    <Phone className="w-3.5 h-3.5" />
+                                                <div className="flex items-center gap-1.5 text-slate-400 font-bold text-[10px] md:text-xs mt-0.5 md:mt-1">
+                                                    <Phone className="w-3 h-3 md:w-3.5 md:h-3.5" />
                                                     {debt.phone_number}
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="scale-90 origin-top-left">
+                                        <div className="scale-75 md:scale-90 origin-top-left">
                                             {getStatusBadge(debt.status)}
                                         </div>
                                     </div>
 
                                     {/* Progress Section */}
-                                    <div className="mb-6 space-y-2">
+                                    <div className="mb-4 md:mb-6 space-y-1.5 md:space-y-2">
                                         <div className="flex justify-between items-end">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">المدفوع</span>
+                                            <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-slate-400">المدفوع</span>
                                             <div className="text-right">
-                                                <span className="font-black text-xl text-slate-900 dark:text-white">
+                                                <span className="font-black text-lg md:text-xl text-slate-900 dark:text-white">
                                                     {debt.paid_amount.toLocaleString()}
                                                 </span>
-                                                <span className="text-xs text-slate-400 font-bold mx-1">/</span>
-                                                <span className="text-sm font-bold text-slate-400">
-                                                    {debt.total_amount.toLocaleString()} <span className="text-[9px]">DH</span>
+                                                <span className="text-[10px] md:text-xs text-slate-400 font-bold mx-1">/</span>
+                                                <span className="text-xs md:text-sm font-bold text-slate-400">
+                                                    {debt.total_amount.toLocaleString()} <span className="text-[8px] md:text-[9px]">DH</span>
                                                 </span>
                                             </div>
                                         </div>
-                                        <div className="h-3 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden p-0.5">
+                                        <div className="h-2.5 md:h-3 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden p-0.5">
                                             <div
                                                 className={cn(
                                                     "h-full rounded-full transition-all duration-1000 ease-out shadow-sm relative overflow-hidden",
@@ -205,17 +205,17 @@ export function DebtsManager({ initialDebts }: DebtsManagerProps) {
                                     </div>
 
                                     {/* Details Grid */}
-                                    <div className="grid grid-cols-2 gap-4 mb-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4">
-                                        <div className="space-y-1">
-                                            <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">المنتج</span>
-                                            <div className="font-bold text-sm text-slate-700 dark:text-slate-300 truncate">
+                                    <div className="grid grid-cols-2 gap-3 md:gap-4 mb-4 md:mb-6 bg-slate-50 dark:bg-slate-800/50 rounded-xl md:rounded-2xl p-3 md:p-4">
+                                        <div className="space-y-0.5 md:space-y-1">
+                                            <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-slate-400 block">المنتج</span>
+                                            <div className="font-bold text-xs md:text-sm text-slate-700 dark:text-slate-300 truncate">
                                                 {debt.product_templates?.name || "---"}
                                             </div>
                                         </div>
-                                        <div className="space-y-1">
-                                            <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">تاريخ الاستحقاق</span>
+                                        <div className="space-y-0.5 md:space-y-1">
+                                            <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-slate-400 block">تاريخ الاستحقاق</span>
                                             <div className={cn(
-                                                "font-bold text-sm",
+                                                "font-bold text-xs md:text-sm",
                                                 isOverdue ? "text-rose-500" : "text-slate-700 dark:text-slate-300"
                                             )}>
                                                 {new Date(debt.due_date).toLocaleDateString("ar-MA")}
