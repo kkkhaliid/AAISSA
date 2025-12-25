@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 import {
     Table,
     TableBody,
@@ -43,11 +45,32 @@ interface DebtsManagerProps {
 }
 
 export function DebtsManager({ initialDebts }: DebtsManagerProps) {
+    const router = useRouter();
     const [debts, setDebts] = useState<Debt[]>(initialDebts);
     const [search, setSearch] = useState("");
     const [filterStatus, setFilterStatus] = useState<string>("all");
     const [selectedDebt, setSelectedDebt] = useState<Debt | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+    // Supabase Realtime subscription
+    useEffect(() => {
+        const supabase = createClient();
+
+        const channel = supabase
+            .channel('debts-changes')
+            .on('postgres_changes',
+                { event: '*', schema: 'public', table: 'debts' },
+                () => {
+                    // Refresh data when any change occurs
+                    router.refresh();
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, [router]);
 
     const filteredDebts = useMemo(() => {
         return debts.filter(debt => {
@@ -61,12 +84,19 @@ export function DebtsManager({ initialDebts }: DebtsManagerProps) {
 
     const handleDelete = async (id: string) => {
         if (!confirm("هل أنت متأكد من حذف هذا السجل؟")) return;
+
+        // Optimistic update
+        const previousDebts = debts;
+        setDebts(debts.filter(d => d.id !== id));
+        toast.success("تم حذف السجل");
+
         const result = await deleteDebt(id);
-        if (result.success) {
-            setDebts(debts.filter(d => d.id !== id));
-            toast.success("تم حذف السجل");
-        } else {
+        if (!result.success) {
+            // Revert on error
+            setDebts(previousDebts);
             toast.error(result.error || "فشل الحذف");
+        } else {
+            router.refresh();
         }
     };
 

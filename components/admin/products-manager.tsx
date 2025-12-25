@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 import { ProductDialog } from "@/components/admin/product-dialog";
 import { Input } from "@/components/ui/input";
 import { Search, Package, Plus, Trash2, Edit2, AlertCircle, Eye } from "lucide-react";
@@ -36,9 +38,35 @@ import { Download, Upload } from "lucide-react";
 import { toast } from "sonner";
 
 export function ProductsManager({ products, stores }: { products: Product[], stores: Store[] }) {
+    const router = useRouter();
     const [search, setSearch] = useState("");
     const [editingProduct, setEditingProduct] = useState<any | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+    // Supabase Realtime subscription
+    useEffect(() => {
+        const supabase = createClient();
+
+        const channel = supabase
+            .channel('products-changes')
+            .on('postgres_changes',
+                { event: '*', schema: 'public', table: 'products' },
+                () => {
+                    router.refresh();
+                }
+            )
+            .on('postgres_changes',
+                { event: '*', schema: 'public', table: 'product_templates' },
+                () => {
+                    router.refresh();
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, [router]);
 
 
     // 1. Group by template

@@ -51,13 +51,27 @@ export function ProductDialog({ stores, product, open: externalOpen, onOpenChang
     const [loading, setLoading] = useState(false);
     const [preview, setPreview] = useState<string | null>(product?.product_templates?.image_url || null);
     const [isDragging, setIsDragging] = useState(false);
+    const [selectedStores, setSelectedStores] = useState<string[]>(
+        product?.all_store_ids || (product?.store_id ? [product.store_id] : [])
+    );
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const isEdit = !!product;
 
     function handleClose() {
         setOpen(false);
-        if (!isEdit) setPreview(null);
+        if (!isEdit) {
+            setPreview(null);
+            setSelectedStores([]);
+        }
+    }
+
+    function toggleStore(storeId: string) {
+        setSelectedStores(prev =>
+            prev.includes(storeId)
+                ? prev.filter(id => id !== storeId)
+                : [...prev, storeId]
+        );
     }
 
     async function optimizeImage(file: File): Promise<File> {
@@ -153,8 +167,10 @@ export function ProductDialog({ stores, product, open: externalOpen, onOpenChang
     useEffect(() => {
         if (product) {
             setPreview(product.product_templates?.image_url || null);
+            setSelectedStores(product.all_store_ids || (product.store_id ? [product.store_id] : []));
         } else {
             setPreview(null);
+            setSelectedStores([]);
         }
     }, [product, open]);
 
@@ -333,14 +349,18 @@ export function ProductDialog({ stores, product, open: externalOpen, onOpenChang
                                     <Label className="text-xs font-medium text-slate-600 dark:text-slate-400">المتاجر المتاحة</Label>
                                     <div className="space-y-2 max-h-[220px] overflow-y-auto custom-scrollbar p-1">
                                         {stores.map((store) => {
-                                            const isChecked = product?.all_store_ids?.includes(store.id) || product?.store_id === store.id;
+                                            const isChecked = selectedStores.includes(store.id);
                                             return (
-                                                <label key={store.id} className={cn(
-                                                    "flex items-center gap-3 p-3.5 rounded-xl border cursor-pointer transition-all duration-200 group",
-                                                    isChecked
-                                                        ? "border-primary/30 bg-primary/5 shadow-sm"
-                                                        : "border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                                                )}>
+                                                <label
+                                                    key={store.id}
+                                                    className={cn(
+                                                        "flex items-center gap-3 p-3.5 rounded-xl border cursor-pointer transition-all duration-200 group",
+                                                        isChecked
+                                                            ? "border-primary/30 bg-primary/5 shadow-sm"
+                                                            : "border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                                                    )}
+                                                    onClick={() => toggleStore(store.id)}
+                                                >
                                                     <div className={cn(
                                                         "w-5 h-5 rounded-md border flex items-center justify-center transition-all",
                                                         isChecked ? "bg-primary border-primary text-white" : "border-slate-300 bg-white dark:bg-slate-800"
@@ -351,7 +371,8 @@ export function ProductDialog({ stores, product, open: externalOpen, onOpenChang
                                                         type="checkbox"
                                                         name="store_ids"
                                                         value={store.id}
-                                                        defaultChecked={isChecked}
+                                                        checked={isChecked}
+                                                        onChange={() => { }}
                                                         className="hidden"
                                                     />
                                                     <span className={cn(

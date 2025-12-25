@@ -30,11 +30,11 @@ export default async function AdminLayout({
         redirect("/login");
     }
 
-    // Fetch unpaid debts count for the notification badge
+    // Fetch overdue debts count for the notification badge
     const { count: unpaidDebtsCount } = await supabase
         .from('debts')
         .select('*', { count: 'exact', head: true })
-        .neq('status', 'paid');
+        .eq('status', 'overdue');
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900" dir="rtl">

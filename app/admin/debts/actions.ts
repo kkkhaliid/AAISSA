@@ -82,6 +82,7 @@ export async function createDebt(formData: FormData) {
     if (error) return { error: error.message };
 
     revalidatePath("/admin/debts");
+    revalidatePath("/admin/dashboard");
     return { success: true };
 }
 
@@ -114,6 +115,7 @@ export async function updateDebtPayment(id: string, paid_amount: number) {
     if (error) return { error: error.message };
 
     revalidatePath("/admin/debts");
+    revalidatePath("/admin/dashboard");
     return { success: true };
 }
 
@@ -123,6 +125,7 @@ export async function deleteDebt(id: string) {
     if (error) return { error: error.message };
 
     revalidatePath("/admin/debts");
+    revalidatePath("/admin/dashboard");
     return { success: true };
 }
 

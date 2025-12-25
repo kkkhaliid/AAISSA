@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { RotateCcw, ShoppingCart, Calendar, User, Store, DollarSign, TrendingUp, Search, Filter, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -21,8 +23,28 @@ interface Sale {
 }
 
 export function SalesManager({ initialSales }: { initialSales: Sale[] }) {
+    const router = useRouter();
     const [search, setSearch] = useState("");
     const [sales, setSales] = useState(initialSales);
+
+    // Supabase Realtime subscription
+    useEffect(() => {
+        const supabase = createClient();
+
+        const channel = supabase
+            .channel('sales-changes')
+            .on('postgres_changes',
+                { event: '*', schema: 'public', table: 'sales' },
+                () => {
+                    router.refresh();
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, [router]);
 
     const filteredSales = sales.filter(sale => {
         const storeName = sale.stores?.name || "";
