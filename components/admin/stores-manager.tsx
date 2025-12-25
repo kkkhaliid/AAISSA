@@ -49,8 +49,8 @@ export function StoresManager({ stores }: { stores: Store[] }) {
     return (
         <div className="space-y-10 max-w-7xl mx-auto" dir="rtl">
             {/* Header */}
-            <div className="flex flex-col items-center md:items-end justify-between gap-6 px-4 md:px-0 text-center md:text-right">
-                <div className="flex flex-col items-center md:items-end">
+            <div className="flex flex-col items-center md:items-start justify-between gap-6 px-4 md:px-0 text-center md:text-right">
+                <div className="flex flex-col items-center md:items-start">
                     <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">إدارة المتاجر</h1>
                     <p className="text-slate-500 font-medium mt-2 text-sm md:text-base">قم بإضافة وتعديل فروع متجرك</p>
                 </div>
@@ -64,24 +64,23 @@ export function StoresManager({ stores }: { stores: Store[] }) {
             {/* Content - Modern Grid of Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 px-4 md:px-0">
                 {stores.map((store) => (
-                    <div key={store.id} className="group relative glass dark:glass-dark p-6 md:p-10 rounded-3xl md:rounded-[3.5rem] shadow-premium hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden border-0 ring-1 ring-white/20 dark:ring-white/5">
-                        {/* Dynamic Gradient Background */}
-                        <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 rounded-full blur-[80px] group-hover:bg-primary/20 transition-all duration-700" />
-                        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-violet-500/10 rounded-full blur-[80px] group-hover:bg-violet-500/20 transition-all duration-700" />
+                    <div key={store.id} className="group relative bg-white dark:bg-slate-900 p-6 md:p-10 rounded-3xl md:rounded-[3.5rem] shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden border border-slate-100 dark:border-slate-800">
+                        {/* Minimal Grid Pattern instead of Blobs */}
+                        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px] rounded-3xl md:rounded-[3.5rem]" />
 
                         <div className="relative z-10">
                             <div className="flex justify-between items-start mb-10">
-                                <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl md:rounded-[2rem] bg-gradient-to-br from-primary/10 to-indigo-500/5 dark:from-primary/20 dark:to-indigo-500/10 text-primary flex items-center justify-center shadow-inner group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 ring-1 ring-primary/20">
+                                <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl md:rounded-[2rem] bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center shadow-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
                                     <Building2 className="w-8 h-8 md:w-10 md:h-10" />
                                 </div>
                                 <div className="flex gap-2">
-                                    <Button variant="ghost" size="icon" onClick={() => openEdit(store)} className="h-12 w-12 text-slate-400 hover:text-primary hover:bg-white dark:hover:bg-slate-800 rounded-2xl shadow-sm transition-all border border-transparent hover:border-slate-100">
+                                    <Button variant="ghost" size="icon" onClick={() => openEdit(store)} className="h-12 w-12 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-2xl shadow-sm transition-all border border-transparent hover:border-slate-100">
                                         <Edit2 className="w-5 h-5" />
                                     </Button>
                                     <ActionIconButton
                                         action={deleteStore}
                                         id={store.id}
-                                        className="w-12 h-12 text-slate-400 hover:text-rose-600 hover:bg-white dark:hover:bg-slate-800 rounded-2xl shadow-sm transition-all border border-transparent hover:border-slate-100"
+                                        className="w-12 h-12 text-slate-400 hover:text-rose-600 hover:bg-slate-50 dark:hover:bg-rose-950/20 rounded-2xl shadow-sm transition-all border border-transparent hover:border-slate-100"
                                     >
                                         <Trash2 className="w-5 h-5" />
                                     </ActionIconButton>
@@ -99,7 +98,7 @@ export function StoresManager({ stores }: { stores: Store[] }) {
                                     </div>
                                 </div>
 
-                                <div className="pt-8 border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
+                                <div className="pt-8 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         <div className="flex -space-x-2">
                                             {[1, 2, 3].map(i => (

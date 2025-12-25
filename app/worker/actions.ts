@@ -39,3 +39,35 @@ export async function processSale(items: SaleItemInput[]) {
     revalidatePath("/worker/pos");
     return { success: true };
 }
+
+export async function getWorkerSales() {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return [];
+
+    const { data: sales, error } = await supabase
+        .from("sales")
+        .select(`
+            *,
+            sale_items (
+                *,
+                products (
+                    product_templates (
+                        name,
+                        image_url
+                    )
+                )
+            )
+        `)
+        .eq('worker_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(50); // Limit to last 50 sales for performance
+
+    if (error) {
+        console.error("Error fetching worker sales:", error);
+        return [];
+    }
+
+    return sales;
+}

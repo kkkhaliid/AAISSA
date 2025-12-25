@@ -11,7 +11,7 @@ export default async function AdminDashboard() {
     return (
         <div className="space-y-8 md:space-y-10 max-w-7xl mx-auto pb-12" dir="rtl">
             {/* Header - Instant */}
-            <div className="flex flex-col items-center md:items-end justify-between gap-6 px-4 md:px-0 text-center md:text-right">
+            <div className="flex flex-col items-center md:items-start justify-between gap-6 px-4 md:px-0 text-center md:text-right">
                 <div>
                     <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
                         لوحة التحكم
@@ -87,10 +87,10 @@ async function KPICardsData() {
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 px-4 md:px-0">
-            <KPICard title="مبيعات اليوم" value={totalSalesToday} icon="DollarSign" trend="إجمالي المحصلة" color="indigo" isCurrency />
+            <KPICard title="مبيعات اليوم" value={totalSalesToday} icon="DollarSign" trend="إجمالي المحصلة" color="dark" isCurrency />
             <KPICard title="صافي الأرباح" value={totalProfitToday} icon="TrendingUp" trend="أرباح اليوم" color="emerald" isCurrency />
             <KPICard title="نواقص المخزون" value={lowStockResult.count || 0} icon="AlertTriangle" trend="تحتاج لإعادة ملء" color={lowStockResult.count && lowStockResult.count > 0 ? "rose" : "slate"} />
-            <KPICard title="إجمالي المنتجات" value={productsResult.count || 0} icon="ShoppingBag" trend="في المستودع" color="amber" />
+            <KPICard title="إجمالي المنتجات" value={productsResult.count || 0} icon="ShoppingBag" trend="في المستودع" color="slate" />
         </div>
     );
 }

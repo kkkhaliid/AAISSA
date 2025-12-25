@@ -1,11 +1,11 @@
 "use client";
-
-import { useState } from "react";
+import React from 'react';
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, ShoppingCart, X, CreditCard, Tag, Package, AlertCircle } from "lucide-react";
+import { Search, ShoppingCart, X, CreditCard, Tag, Package, AlertCircle, History, Calendar, Clock, ChevronRight, Calculator } from "lucide-react";
 import { toast } from "sonner";
-import { processSale } from "@/app/worker/actions";
+import { processSale, getWorkerSales } from "@/app/worker/actions";
 import {
     Dialog,
     DialogContent,
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type Product = {
     id: string;
@@ -36,12 +37,32 @@ type CartItem = Product & {
 };
 
 export function POSInterface({ products }: { products: Product[] }) {
+    const [activeTab, setActiveTab] = useState("pos");
+
+    // POS State
     const [search, setSearch] = useState("");
     const [cart, setCart] = useState<CartItem[]>([]);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [priceInput, setPriceInput] = useState("");
     const [loading, setLoading] = useState(false);
     const [isCartOpen, setIsCartOpen] = useState(false);
+
+    // History State
+    const [history, setHistory] = useState<any[]>([]);
+    const [loadingHistory, setLoadingHistory] = useState(false);
+
+    useEffect(() => {
+        if (activeTab === 'history') {
+            loadHistory();
+        }
+    }, [activeTab]);
+
+    async function loadHistory() {
+        setLoadingHistory(true);
+        const sales = await getWorkerSales();
+        setHistory(sales || []);
+        setLoadingHistory(false);
+    }
 
     // Filter products
     const filteredProducts = products.filter((p) => {
@@ -115,392 +136,318 @@ export function POSInterface({ products }: { products: Product[] }) {
         if (result.error) {
             toast.error("Transaction failed: " + result.error);
         } else {
-            toast.success("Sale completed successfully!");
+            toast.success("تمت عملية البيع بنجاح!");
             setCart([]);
             setIsCartOpen(false);
+            // Switch to history to see the new sale
+            setActiveTab('history');
         }
     }
 
     return (
-        <div className="flex flex-col lg:flex-row gap-8 h-full lg:h-[calc(100vh-160px)] overflow-hidden relative pb-4 px-1" dir="rtl">
-            {/* Mobile Cart Trigger - Modern Floating Pill */}
-            <div className="lg:hidden fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] w-[90%] max-w-sm">
-                <Button
-                    size="lg"
-                    className="w-full h-16 rounded-[2rem] gradient-primary shadow-2xl shadow-indigo-500/40 flex justify-between px-8 font-black text-xl active:scale-95 border-0 text-white"
-                    onClick={() => setIsCartOpen(true)}
-                >
-                    <div className="flex items-center gap-3">
-                        <div className="bg-white/20 p-2 rounded-xl">
-                            <ShoppingCart className="w-6 h-6" />
-                        </div>
-                        <span>سلة التسوق</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <span className="bg-white/20 px-3 py-1 rounded-full text-sm font-black">{cart.length}</span>
-                        <span className="text-2xl tracking-tighter">{total.toFixed(0)} <span className="text-sm">DH</span></span>
-                    </div>
-                </Button>
-            </div>
+        <div className="flex flex-col h-full lg:h-[calc(100vh-160px)] relative" dir="rtl">
 
-            {/* LEFT: Product Grid */}
-            <div className="flex-1 flex flex-col gap-8 min-w-0 h-full">
-                {/* Modern Search & Filter Area */}
-                <div className="flex flex-col md:flex-row gap-4 shrink-0 px-2 lg:px-0">
-                    <div className="relative flex-1 group">
-                        <Search className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 w-6 h-6 group-focus-within:text-primary transition-colors" />
-                        <Input
-                            placeholder="البحث عن المنتجات بالاسم أو الباركود..."
-                            className="pr-14 h-16 text-xl bg-white dark:bg-slate-900 border-0 ring-1 ring-slate-200 dark:ring-slate-800 rounded-3xl shadow-premium focus-visible:ring-primary/40 text-right font-medium"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                        />
-                        {search && (
-                            <button
-                                onClick={() => setSearch("")}
-                                className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-500 transition-colors"
-                            >
-                                <X className="w-6 h-6" />
-                            </button>
+            {/* Navigation Tabs */}
+            <div className="mb-6 flex justify-center sticky top-0 z-40">
+                <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-1.5 rounded-2xl ring-1 ring-black/5 dark:ring-white/10 shadow-lg flex gap-1">
+                    <button
+                        onClick={() => setActiveTab('pos')}
+                        className={cn(
+                            "px-6 py-2.5 rounded-xl font-black text-sm transition-all duration-300 flex items-center gap-2",
+                            activeTab === 'pos'
+                                ? "bg-primary text-white shadow-lg shadow-primary/25 scale-105"
+                                : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
                         )}
-                    </div>
-                </div>
-
-                {/* Refined Grid - More Compact */}
-                <div className="grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 gap-4 overflow-y-auto pr-2 pb-32 lg:pb-6 scrollbar-hide">
-                    {filteredProducts.map((product) => (
-                        <div
-                            key={product.id}
-                            onClick={() => addToCartAttempt(product)}
-                            className={cn(
-                                "group relative bg-white dark:bg-slate-900 rounded-[2.5rem] p-5 shadow-premium border-0 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer active:scale-95 ring-1 ring-slate-100 dark:ring-slate-800/50",
-                                product.stock <= 0 && "opacity-60 pointer-events-none grayscale"
-                            )}
-                        >
-                            {/* Stock Badge - Premium Float */}
-                            <div className={cn(
-                                "absolute top-4 left-4 z-10 px-3 py-1.5 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-md backdrop-blur-md ring-1 ring-white/20",
-                                product.stock < 5 ? "bg-rose-500 text-white shadow-rose-500/20" : "bg-emerald-500 text-white shadow-emerald-500/20"
-                            )}>
-                                {product.stock} pcs
-                            </div>
-
-                            {/* Image Container */}
-                            <div className="aspect-square rounded-[2rem] bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center mb-4 group-hover:bg-primary/5 transition-colors overflow-hidden relative ring-1 ring-slate-100/50 dark:ring-white/5">
-                                {product.product_templates?.image_url ? (
-                                    <img
-                                        src={product.product_templates.image_url}
-                                        alt={product.product_templates.name}
-                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                    />
-                                ) : (
-                                    <Package className="w-12 h-12 text-slate-200 group-hover:text-primary/20 transition-colors" />
-                                )}
-                            </div>
-
-                            {/* Text Content */}
-                            <div className="space-y-3">
-                                <div className="space-y-1">
-                                    <h3 className="font-black text-slate-900 dark:text-white line-clamp-1 text-right leading-tight text-base tracking-tight group-hover:text-primary transition-colors duration-300">
-                                        {product.product_templates?.name}
-                                    </h3>
-                                    {product.product_templates?.description && (
-                                        <p className="text-[10px] text-slate-400 dark:text-slate-500 line-clamp-1 text-right font-bold uppercase tracking-tight">
-                                            {product.product_templates.description}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className="pt-3 border-t border-slate-50 dark:border-white/5 flex items-center justify-between">
-                                    <div className="flex flex-col items-end">
-                                        <div className="text-primary font-black text-xl tracking-tighter">
-                                            {product.min_sell_price.toLocaleString()} <span className="text-[10px] font-bold text-slate-400">DH</span>
-                                        </div>
-                                    </div>
-                                    <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-sm">
-                                        <ShoppingCart className="w-4 h-4" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-
-                    {filteredProducts.length === 0 && (
-                        <div className="col-span-full flex flex-col items-center justify-center text-slate-300 py-32 space-y-6">
-                            <div className="w-24 h-24 bg-slate-50 dark:bg-slate-800 rounded-[2.5rem] flex items-center justify-center shadow-inner">
-                                <Search className="w-12 h-12" />
-                            </div>
-                            <div className="text-center">
-                                <p className="font-black text-2xl text-slate-900 dark:text-white">لم يتم العثور على أي منتج</p>
-                                <p className="text-slate-500 font-medium mt-1">جرب كلمات بحث أخرى أو ابحث بالباركود</p>
-                            </div>
-                        </div>
-                    )}
+                    >
+                        <Calculator className="w-4 h-4" />
+                        نقطة البيع
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('history')}
+                        className={cn(
+                            "px-6 py-2.5 rounded-xl font-black text-sm transition-all duration-300 flex items-center gap-2",
+                            activeTab === 'history'
+                                ? "bg-primary text-white shadow-lg shadow-primary/25 scale-105"
+                                : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        )}
+                    >
+                        <History className="w-4 h-4" />
+                        سجل مبيعاتي
+                    </button>
                 </div>
             </div>
 
-            {/* RIGHT: Cart Sidebar - Premium Panel */}
-            <div className={cn(
-                "fixed inset-0 z-[100] lg:relative lg:inset-auto lg:z-auto transition-all duration-700 ease-in-out",
-                isCartOpen ? "translate-y-0" : "translate-y-full lg:translate-y-0",
-                "lg:w-[480px] shrink-0 flex flex-col h-full bg-slate-50/95 dark:bg-slate-950/95 lg:bg-transparent backdrop-blur-2xl lg:backdrop-blur-none"
-            )}>
-                <div className="flex-1 flex flex-col bg-white dark:bg-slate-900 lg:rounded-[3rem] shadow-2xl lg:shadow-premium border-0 overflow-hidden h-full relative ring-1 ring-black/5 dark:ring-white/5">
-                    <div className="px-8 py-8 border-b border-slate-50 dark:border-white/5 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/20 backdrop-blur-sm shrink-0">
-                        <div className="flex items-center gap-4">
-                            <div className="w-14 h-14 rounded-2xl bg-primary text-white flex items-center justify-center shadow-xl shadow-primary/30 ring-4 ring-primary/10">
-                                <ShoppingCart className="w-6 h-6" />
+            {activeTab === 'pos' ? (
+                /* POS VIEW */
+                <div className="flex flex-col lg:flex-row gap-8 flex-1 min-h-0 relative pb-safe">
+                    {/* Mobile Cart Trigger */}
+                    <div className="lg:hidden fixed bottom-8 left-1/2 -translate-x-1/2 z-[60] w-[90%] max-w-sm">
+                        <Button
+                            size="lg"
+                            className="w-full h-16 rounded-[2rem] bg-gradient-to-r from-indigo-600 to-primary shadow-2xl shadow-indigo-500/40 flex justify-between px-8 font-black text-xl active:scale-95 border-0 text-white"
+                            onClick={() => setIsCartOpen(true)}
+                        >
+                            <div className="flex items-center gap-3">
+                                <div className="bg-white/20 p-2 rounded-xl">
+                                    <ShoppingCart className="w-6 h-6" />
+                                </div>
+                                <span>سلة التسوق</span>
                             </div>
-                            <div className="text-right">
-                                <h2 className="font-black text-2xl text-slate-900 dark:text-white leading-tight">سلة المبيعات</h2>
-                                <p className="text-xs text-primary font-black uppercase tracking-[0.2em] mt-1">{cart.length} منتجات مضافة</p>
+                            <div className="flex items-center gap-3">
+                                <span className="bg-white/20 px-3 py-1 rounded-full text-sm font-black">{cart.length}</span>
+                                <span className="text-2xl tracking-tighter">{total.toFixed(0)} <span className="text-sm">DH</span></span>
                             </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            {cart.length > 0 && (
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={clearCart}
-                                    className="hidden lg:flex items-center gap-2 text-rose-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 font-black text-xs h-10 px-4 rounded-xl"
-                                >
-                                    <span>تفريغ السلة</span>
-                                </Button>
-                            )}
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="lg:hidden rounded-2xl bg-slate-100 dark:bg-slate-800 w-12 h-12"
-                                onClick={() => setIsCartOpen(false)}
-                            >
-                                <X className="w-6 h-6" />
-                            </Button>
-                        </div>
+                        </Button>
                     </div>
 
-                    {/* Cart Body - Custom Scrollbar */}
-                    <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 custom-scrollbar bg-slate-50/30 dark:bg-transparent">
-                        {cart.length > 0 ? (
-                            cart.map((item) => (
-                                <div key={item.cartId} className="flex gap-4 items-center bg-white dark:bg-slate-800/50 rounded-[1.5rem] p-4 group/item transition-all hover:bg-white dark:hover:bg-slate-800 shadow-sm hover:shadow-lg ring-1 ring-slate-100 dark:ring-white/5">
-                                    {/* Item Image - Compact */}
-                                    <div className="w-14 h-14 rounded-xl bg-slate-50 dark:bg-slate-700 flex items-center justify-center text-slate-200 shrink-0 shadow-inner overflow-hidden font-bold">
-                                        {item.product_templates?.image_url ? (
-                                            <img src={item.product_templates.image_url} alt="" className="w-full h-full object-cover" />
+                    {/* Left: Product Grid */}
+                    <div className="flex-1 flex flex-col gap-6 min-w-0 h-full overflow-hidden">
+                        <div className="relative group shrink-0 mx-2 lg:mx-0">
+                            <Search className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 group-focus-within:text-primary transition-colors" />
+                            <Input
+                                placeholder="بحث عن منتج..."
+                                className="pr-12 h-14 bg-white dark:bg-slate-900 border-0 ring-1 ring-slate-200 dark:ring-slate-800 rounded-2xl shadow-sm focus-visible:ring-primary/40 text-right font-bold"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto pr-2 pb-32 lg:pb-0 scrollbar-hide flex-1">
+                            {filteredProducts.map((product) => (
+                                <div
+                                    key={product.id}
+                                    onClick={() => addToCartAttempt(product)}
+                                    className={cn(
+                                        "group relative bg-white dark:bg-slate-900 rounded-[2rem] p-4 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer active:scale-95 ring-1 ring-slate-100 dark:ring-white/5",
+                                        product.stock <= 0 && "opacity-60 pointer-events-none grayscale"
+                                    )}
+                                >
+                                    <div className={cn(
+                                        "absolute top-3 left-3 z-10 px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider backdrop-blur-md ring-1 ring-white/20",
+                                        product.stock < 5 ? "bg-rose-500/90 text-white" : "bg-emerald-500/90 text-white"
+                                    )}>
+                                        {product.stock} pcs
+                                    </div>
+
+                                    <div className="aspect-square rounded-[1.5rem] bg-slate-50 dark:bg-slate-800 flex items-center justify-center mb-3 overflow-hidden relative group-hover:bg-primary/5 transition-colors">
+                                        {product.product_templates?.image_url ? (
+                                            <img
+                                                src={product.product_templates.image_url}
+                                                alt={product.product_templates.name}
+                                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                            />
                                         ) : (
-                                            <Package className="w-6 h-6" />
+                                            <Package className="w-10 h-10 text-slate-300" />
                                         )}
                                     </div>
 
-                                    {/* Item Details */}
-                                    <div className="flex-1 min-w-0 text-right">
-                                        <h4 className="font-black text-sm truncate text-slate-900 dark:text-white tracking-tight">{item.product_templates?.name}</h4>
-                                        <div className="flex items-center justify-between gap-1 mt-1">
-                                            <div className="flex items-center gap-1.5 font-black text-primary">
-                                                <span className="text-lg tracking-tighter">{item.sellPrice.toLocaleString()}</span>
-                                                <span className="text-[9px] uppercase opacity-70">DH</span>
+                                    <div className="space-y-2 text-right">
+                                        <h3 className="font-bold text-slate-900 dark:text-white line-clamp-1 leading-tight text-sm">
+                                            {product.product_templates?.name}
+                                        </h3>
+                                        <div className="flex items-center justify-between">
+                                            <div className="text-primary font-black text-lg tracking-tight">
+                                                {product.min_sell_price.toLocaleString()} <span className="text-[10px] text-slate-400">DH</span>
                                             </div>
-
-                                            {/* Quantity Controls */}
-                                            <div className="flex items-center bg-slate-50 dark:bg-slate-900 rounded-lg p-0.5 ring-1 ring-black/5">
-                                                <button
-                                                    onClick={() => updateQuantity(item.cartId, 1)}
-                                                    className="w-6 h-6 flex items-center justify-center hover:bg-white dark:hover:bg-slate-800 rounded-md transition-colors text-slate-400 hover:text-primary"
-                                                >
-                                                    <span className="text-lg font-black">+</span>
-                                                </button>
-                                                <span className="w-6 text-center text-xs font-black text-slate-600 dark:text-slate-300">{item.quantity}</span>
-                                                <button
-                                                    onClick={() => updateQuantity(item.cartId, -1)}
-                                                    className="w-6 h-6 flex items-center justify-center hover:bg-white dark:hover:bg-slate-800 rounded-md transition-colors text-slate-400 hover:text-rose-500"
-                                                >
-                                                    <span className="text-xl font-black">−</span>
-                                                </button>
+                                            <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-primary group-hover:text-white transition-colors">
+                                                <ShoppingCart className="w-4 h-4" />
                                             </div>
                                         </div>
                                     </div>
-
-                                    {/* Remove Item - Absolute position for cleaner look */}
-                                    <button
-                                        onClick={() => removeFromCart(item.cartId)}
-                                        className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-300 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950 transition-all"
-                                    >
-                                        <X className="w-4 h-4" />
-                                    </button>
                                 </div>
-                            ))
-                        ) : (
-                            <div className="h-full flex flex-col items-center justify-center px-10 text-center space-y-6 py-20">
-                                <div className="w-40 h-40 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center shadow-premium relative">
-                                    <ShoppingCart className="w-16 h-16 text-slate-200" />
-                                    <div className="absolute top-0 right-0 w-12 h-12 bg-primary/10 rounded-full animate-pulse" />
-                                </div>
-                                <div className="space-y-2">
-                                    <p className="font-black text-2xl text-slate-900 dark:text-white">سلة المبيعات فارغة</p>
-                                    <p className="text-slate-500 font-medium leading-relaxed">ابدأ بإضافة المنتجات من قائمة المعروضات لإتمام عملية البيع</p>
-                                </div>
-                            </div>
-                        )}
+                            ))}
+                        </div>
                     </div>
 
-                    {/* Cart Footer - Premium Sticky */}
-                    <div className="p-8 md:p-10 bg-white dark:bg-slate-900 border-t border-slate-50 dark:border-white/5 space-y-8 pb-12 lg:pb-12 shrink-0 z-30">
-                        <div className="flex justify-between items-end">
-                            <div className="flex flex-col gap-1 items-start">
-                                <span className="uppercase tracking-[0.3em] text-[10px] text-primary font-black">المجموع النهائي</span>
-                                <div className="flex items-baseline gap-2">
-                                    <span className="text-5xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tighter leading-none">{total.toLocaleString()}</span>
-                                    <span className="text-xl font-bold text-slate-400">DH</span>
+                    {/* Right: Cart Sidebar (Desktop) */}
+                    <div className={cn(
+                        "fixed inset-0 z-[100] lg:relative lg:inset-auto lg:z-auto transition-all duration-500",
+                        isCartOpen ? "translate-y-0" : "translate-y-full lg:translate-y-0",
+                        "lg:w-[420px] shrink-0 flex flex-col h-full bg-slate-50/95 dark:bg-slate-950/95 lg:bg-transparent backdrop-blur-3xl lg:backdrop-blur-none"
+                    )}>
+                        <div className="flex-1 flex flex-col bg-white dark:bg-slate-900 lg:rounded-[2.5rem] shadow-2xl lg:shadow-xl border-0 overflow-hidden h-full relative ring-1 ring-black/5 dark:ring-white/5">
+                            {/* Cart Header */}
+                            <div className="px-6 py-5 border-b border-slate-100 dark:border-white/5 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/20">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/20">
+                                        <ShoppingCart className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h2 className="font-black text-lg text-slate-900 dark:text-white">سلة المبيعات</h2>
+                                        <p className="text-[10px] text-primary font-bold uppercase tracking-wider">{cart.length} منتجات</p>
+                                    </div>
                                 </div>
+                                <div className="flex items-center gap-2">
+                                    {cart.length > 0 && (
+                                        <Button variant="ghost" size="sm" onClick={clearCart} className="text-rose-500 hover:bg-rose-50 h-9 px-3 text-xs font-bold rounded-lg hidden lg:flex">
+                                            تفريغ
+                                        </Button>
+                                    )}
+                                    <Button variant="ghost" size="icon" className="lg:hidden rounded-xl" onClick={() => setIsCartOpen(false)}>
+                                        <X className="w-5 h-5" />
+                                    </Button>
+                                </div>
+                            </div>
+
+                            {/* Cart Items */}
+                            <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
+                                {cart.length > 0 ? (
+                                    cart.map((item) => (
+                                        <div key={item.cartId} className="flex gap-3 items-center bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-3 ring-1 ring-slate-100 dark:ring-white/5">
+                                            <div className="w-12 h-12 rounded-xl bg-white dark:bg-slate-700 flex items-center justify-center shrink-0 overflow-hidden">
+                                                {item.product_templates?.image_url ? (
+                                                    <img src={item.product_templates.image_url} alt="" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <Package className="w-5 h-5 text-slate-300" />
+                                                )}
+                                            </div>
+                                            <div className="flex-1 min-w-0 text-right">
+                                                <h4 className="font-bold text-xs truncate text-slate-900 dark:text-white">{item.product_templates?.name}</h4>
+                                                <div className="flex items-center justify-between gap-2 mt-1">
+                                                    <div className="font-black text-primary text-sm flex items-baseline gap-0.5">
+                                                        {item.sellPrice.toLocaleString()} <span className="text-[9px] opacity-70">DH</span>
+                                                    </div>
+                                                    <div className="flex items-center bg-white dark:bg-slate-900 rounded-lg p-0.5 ring-1 ring-black/5 dark:ring-white/10">
+                                                        <button onClick={() => updateQuantity(item.cartId, 1)} className="w-5 h-5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-400 hover:text-primary transition-colors">+</button>
+                                                        <span className="w-5 text-center text-[10px] font-bold">{item.quantity}</span>
+                                                        <button onClick={() => updateQuantity(item.cartId, -1)} className="w-5 h-5 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-400 hover:text-rose-500 transition-colors">−</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button onClick={() => removeFromCart(item.cartId)} className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-rose-50 text-slate-300 hover:text-rose-500 transition-colors">
+                                                <X className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="h-full flex flex-col items-center justify-center text-center p-8 space-y-4 opacity-50">
+                                        <ShoppingCart className="w-16 h-16 text-slate-300" />
+                                        <p className="font-medium text-sm">السلة فارغة حالياً</p>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Checkout Footer */}
+                            <div className="p-6 bg-slate-50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-white/5 space-y-4">
+                                <div className="flex justify-between items-end">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">الإجمالي</span>
+                                    <div className="font-black text-3xl text-slate-900 dark:text-white tracking-tighter">
+                                        {total.toLocaleString()} <span className="text-sm text-slate-400">DH</span>
+                                    </div>
+                                </div>
+                                <Button
+                                    size="lg"
+                                    className="w-full h-14 rounded-xl bg-primary hover:bg-primary/90 text-white font-black text-lg shadow-xl shadow-primary/20 hover:scale-[1.01] transition-all"
+                                    onClick={handleCheckout}
+                                    disabled={cart.length === 0 || loading}
+                                >
+                                    {loading ? "جاري المعالجة..." : "إتمام البيع"}
+                                </Button>
                             </div>
                         </div>
-
-                        <Button
-                            size="lg"
-                            className="w-full h-20 text-2xl font-black rounded-3xl gradient-primary shadow-2xl shadow-indigo-500/40 hover:scale-[1.02] transition-all active:scale-[0.98] border-0 text-white gap-4 group"
-                            onClick={handleCheckout}
-                            disabled={cart.length === 0 || loading}
-                        >
-                            {loading ? "جاري المعالجة..." : (
-                                <>
-                                    <span>إتمام عملية البيع</span>
-                                    <CreditCard className="w-7 h-7 group-hover:translate-x-[-4px] transition-transform" />
-                                </>
-                            )}
-                        </Button>
                     </div>
                 </div>
-            </div>
 
+            ) : (
+                /* HISTORY VIEW */
+                <div className="flex-1 overflow-hidden min-h-0 relative animate-in fade-in slide-in-from-right-4 duration-300">
+                    <div className="h-full overflow-y-auto custom-scrollbar px-2 lg:px-4 pb-12">
+                        <div className="max-w-4xl mx-auto space-y-4">
+                            {loadingHistory ? (
+                                <div className="py-20 text-center text-slate-400">جاري تحميل السجل...</div>
+                            ) : history.length === 0 ? (
+                                <div className="py-20 flex flex-col items-center justify-center text-slate-400 gap-4">
+                                    <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center">
+                                        <History className="w-8 h-8 opacity-50" />
+                                    </div>
+                                    <p className="font-bold">لا يوجد سجل مبيعات حتى الآن</p>
+                                </div>
+                            ) : (
+                                history.map((sale) => (
+                                    <div key={sale.id} className="bg-white dark:bg-slate-900 rounded-[2rem] p-5 shadow-sm border border-slate-100 dark:border-white/5 hover:shadow-md transition-shadow">
+                                        <div className="flex justify-between items-start mb-4 border-b border-slate-100 dark:border-white/5 pb-4">
+                                            <div className="flex gap-3 items-center">
+                                                <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-black text-lg">
+                                                    $
+                                                </div>
+                                                <div>
+                                                    <div className="font-black text-lg text-slate-900 dark:text-white">
+                                                        {sale.total_price.toLocaleString()} <span className="text-xs text-slate-400">DH</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2 text-xs text-slate-400 font-bold mt-0.5">
+                                                        <Calendar className="w-3 h-3" />
+                                                        {new Date(sale.created_at).toLocaleDateString('ar-MA')}
+                                                        <Clock className="w-3 h-3 mr-2" />
+                                                        {new Date(sale.created_at).toLocaleTimeString('ar-MA', { hour: '2-digit', minute: '2-digit' })}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full text-xs font-bold text-slate-500">
+                                                {sale.sale_items?.length || 0} منتجات
+                                            </div>
+                                        </div>
+
+                                        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                                            {sale.sale_items?.map((item: any, idx: number) => (
+                                                <div key={idx} className="flex-none w-16 group relative">
+                                                    <div className="aspect-square rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center overflow-hidden mb-1 ring-1 ring-black/5">
+                                                        {item.products?.product_templates?.image_url ? (
+                                                            <img src={item.products.product_templates.image_url} className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            <Package className="w-6 h-6 text-slate-300" />
+                                                        )}
+                                                    </div>
+                                                    <div className="text-[10px] font-bold text-center truncate text-slate-600 dark:text-slate-400">
+                                                        x{item.quantity}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Price Modal */}
             <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
-                <DialogContent className="max-w-[80vw] sm:max-w-[80vw] w-full h-[70vh] max-h-[750px] flex flex-col p-0 gap-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-3xl overflow-hidden rounded-[2.5rem] border-0 ring-1 ring-slate-200/50 dark:ring-white/10 shadow-premium transition-all duration-500 [&>button]:hidden text-right" dir="rtl">
-                    {/* Header - Compact */}
-                    <DialogHeader className="px-8 py-5 border-b border-slate-100 dark:border-white/5 flex flex-row items-center justify-between bg-gradient-to-l from-slate-50/50 via-white/50 to-slate-50/50 dark:from-slate-900/50 dark:via-slate-900/80 dark:to-slate-900/50 shrink-0 z-20">
-                        <div className="flex flex-col gap-0.5 items-start text-right">
-                            <DialogTitle className="text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
-                                <div className="p-2.5 rounded-2xl bg-primary text-white shadow-lg shadow-primary/30 ring-4 ring-primary/10">
-                                    <Tag className="w-5 h-5" />
-                                </div>
-                                تحديد سعر البيع
-                            </DialogTitle>
-                            <p className="text-slate-500 font-bold text-xs mr-12">تأكد من السعر المتفق عليه مع العميل</p>
-                        </div>
-
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setSelectedProduct(null)}
-                            className="rounded-full w-10 h-10 bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-900/20 dark:hover:text-rose-400 transition-all active:scale-95"
-                        >
-                            <X className="w-5 h-5" />
-                        </Button>
+                <DialogContent className="max-w-[80vw] sm:max-w-md w-full bg-white dark:bg-slate-900 rounded-[2rem] p-0 overflow-hidden border-0 shadow-2xl" dir="rtl">
+                    <DialogHeader className="px-6 py-4 border-b border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-slate-800/50">
+                        <DialogTitle className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+                            <Tag className="w-5 h-5 text-primary" />
+                            تحديد السعر
+                        </DialogTitle>
                     </DialogHeader>
 
-                    {/* Body - Optimized for 0 Scrolling */}
-                    <div className="flex-1 overflow-hidden p-8 flex flex-col justify-center bg-slate-50/20 dark:bg-transparent">
-                        <div className="grid grid-cols-12 gap-10 items-stretch">
-
-                            {/* LEFT: Price Input & Description (7 Cols) */}
-                            <div className="col-span-7 flex flex-col gap-6 justify-center">
-                                {/* Price Focus Block */}
-                                <div className="space-y-6">
-                                    <div className="relative group">
-                                        <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-indigo-500/20 rounded-[2.5rem] blur opacity-25 group-focus-within:opacity-100 transition duration-1000"></div>
-                                        <div className="relative h-28 bg-white dark:bg-slate-800 rounded-[2.5rem] shadow-inner ring-1 ring-black/5 dark:ring-white/5 flex items-center justify-center px-10 overflow-hidden">
-                                            <div className="absolute top-2.5 right-8 text-[9px] font-black text-primary uppercase tracking-[0.3em]">السعر الحالي</div>
-                                            <div className="flex items-center justify-center w-full">
-                                                <Input
-                                                    type="number"
-                                                    value={priceInput}
-                                                    onChange={(e) => setPriceInput(e.target.value)}
-                                                    className="w-full h-20 text-6xl font-black text-center border-0 bg-transparent focus-visible:ring-0 text-primary caret-primary"
-                                                    onFocus={(e) => e.target.select()}
-                                                />
-                                                <span className="text-2xl font-black text-slate-300 mr-2">DH</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Range Visualization */}
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="relative overflow-hidden bg-white dark:bg-slate-800 p-5 rounded-2xl ring-1 ring-black/5 dark:ring-white/5 shadow-sm transition-transform hover:scale-[1.02]">
-                                            <div className="absolute top-0 right-0 w-1 h-full bg-rose-500/20"></div>
-                                            <p className="text-[9px] font-black text-rose-500 uppercase tracking-widest mb-1">الحد الأدنى للبيع</p>
-                                            <div className="flex items-baseline gap-1.5">
-                                                <span className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter">{selectedProduct?.min_sell_price.toLocaleString()}</span>
-                                                <span className="text-[10px] font-bold text-slate-400 uppercase">DH</span>
-                                            </div>
-                                        </div>
-                                        <div className="relative overflow-hidden bg-white dark:bg-slate-800 p-5 rounded-2xl ring-1 ring-black/5 dark:ring-white/5 shadow-sm transition-transform hover:scale-[1.02]">
-                                            <div className="absolute top-0 right-0 w-1 h-full bg-emerald-500/20"></div>
-                                            <p className="text-[9px] font-black text-emerald-500 uppercase tracking-widest mb-1">السعر المقترح</p>
-                                            <div className="flex items-baseline gap-1.5">
-                                                <span className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter">{selectedProduct?.max_sell_price.toLocaleString()}</span>
-                                                <span className="text-[10px] font-bold text-slate-400 uppercase">DH</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Product Description - High Visibility */}
-                                {selectedProduct?.product_templates?.description && (
-                                    <div className="bg-white/40 dark:bg-slate-800/40 p-6 rounded-[2rem] border border-slate-100 dark:border-white/5 backdrop-blur-sm self-stretch group/desc hover:bg-white/60 dark:hover:bg-slate-800/60 transition-colors cursor-default">
-                                        <div className="flex items-center gap-2 mb-2 justify-start">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover/desc:bg-primary transition-colors"></div>
-                                            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">تفاصيل المنتج</h4>
-                                        </div>
-                                        <p className="text-base font-bold text-slate-700 dark:text-slate-200 leading-relaxed text-right line-clamp-3">
-                                            {selectedProduct.product_templates.description}
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* RIGHT: Product Identity (5 Cols) - Mega Image */}
-                            <div className="col-span-5">
-                                <div className="h-full bg-white dark:bg-slate-800 rounded-[2.5rem] p-8 ring-1 ring-black/5 dark:ring-white/5 shadow-xl flex flex-col justify-center items-center text-center relative overflow-hidden group">
-                                    <div className="absolute -top-12 -right-12 w-32 h-32 bg-primary/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
-
-                                    <div className="aspect-square w-full max-w-[260px] rounded-[2rem] bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-1 shadow-inner ring-1 ring-black/5 overflow-hidden mb-6">
-                                        {selectedProduct?.product_templates?.image_url ? (
-                                            <img src={selectedProduct.product_templates.image_url} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                                        ) : (
-                                            <Package className="w-24 h-24 text-slate-300" />
-                                        )}
-                                    </div>
-
-                                    <div className="space-y-4 w-full">
-                                        <h4 className="font-black text-3xl text-slate-900 dark:text-white leading-tight tracking-tight px-4">{selectedProduct?.product_templates?.name}</h4>
-                                        <div className="flex items-center justify-center gap-4">
-                                            <div className="px-5 py-2 rounded-xl bg-slate-50 dark:bg-slate-900 ring-1 ring-black/5 dark:ring-white/5 inline-flex items-center gap-2">
-                                                <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-                                                <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">متوفر: {selectedProduct?.stock}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                    <div className="p-6 space-y-6">
+                        <div className="text-center">
+                            <p className="text-sm font-bold text-slate-500 mb-2">السعر المقترح</p>
+                            <div className="text-4xl font-black text-primary tracking-tighter">
+                                {selectedProduct?.min_sell_price.toLocaleString()} <span className="text-lg text-slate-300">DH</span>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Footer - Final Slim */}
-                    <div className="p-6 border-t border-slate-100 dark:border-white/5 bg-white dark:bg-slate-900 backdrop-blur-md flex flex-row items-center justify-end gap-3 shrink-0 z-20">
-                        <Button
-                            variant="ghost"
-                            className="h-12 px-6 rounded-xl font-black text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-xs"
-                            onClick={() => setSelectedProduct(null)}
-                        >
-                            إلغاء العملية
-                        </Button>
-                        <Button
-                            className="h-14 px-8 rounded-2xl bg-primary hover:bg-primary/90 text-white text-base font-black shadow-xl shadow-primary/30 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2.5 group/btn"
-                            onClick={confirmAddToCart}
-                        >
-                            <ShoppingCart className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                            <span>إضافة للسلة</span>
-                        </Button>
+                        <div className="space-y-2">
+                            <Label className="text-xs font-bold uppercase tracking-wider text-slate-500">سعر البيع الفعلي</Label>
+                            <Input
+                                type="number"
+                                value={priceInput}
+                                onChange={(e) => setPriceInput(e.target.value)}
+                                className="h-14 text-center text-2xl font-black rounded-2xl border-slate-200 dark:border-slate-800 focus-visible:ring-primary"
+                                autoFocus
+                            />
+                        </div>
+
+                        <div className="flex gap-3">
+                            <Button variant="ghost" className="flex-1 h-12 rounded-xl" onClick={() => setSelectedProduct(null)}>
+                                إلغاء
+                            </Button>
+                            <Button className="flex-[2] h-12 rounded-xl font-bold text-lg" onClick={confirmAddToCart}>
+                                تأكيد وإضافة
+                            </Button>
+                        </div>
                     </div>
                 </DialogContent>
             </Dialog>

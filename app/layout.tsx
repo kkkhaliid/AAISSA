@@ -23,6 +23,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "AissaPhone Cloud | نظام إدارة المبيعات",
   description: "المنصة المتكاملة لإدارة متاجر الهواتف، الديون، والمخزون بدقة واحترافية.",
+  manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

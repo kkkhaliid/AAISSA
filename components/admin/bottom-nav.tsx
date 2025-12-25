@@ -14,14 +14,17 @@ const bottomNavItems = [
 ];
 
 
-export function BottomNav() {
+export function BottomNav({ debtCount = 0 }: { debtCount?: number }) {
     const pathname = usePathname();
+    console.log("DEBUG: BottomNav rendered. Count:", debtCount);
 
     return (
         <nav className="md:hidden fixed bottom-0 left-0 right-0 h-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-slate-200/50 dark:border-white/5 z-[60] px-4 pb-safe">
             <div className="flex items-center justify-around h-full max-w-lg mx-auto">
                 {bottomNavItems.map((item) => {
                     const isActive = pathname === item.href;
+                    const isDebts = item.href === "/admin/debts";
+
                     return (
                         <Link
                             key={item.href}
@@ -32,13 +35,19 @@ export function BottomNav() {
                             )}
                         >
                             <div className={cn(
-                                "w-12 h-10 rounded-2xl flex items-center justify-center transition-all duration-300",
+                                "w-12 h-10 rounded-2xl flex items-center justify-center transition-all duration-300 relative",
                                 isActive ? "bg-primary/10" : "group-active:scale-90"
                             )}>
                                 <item.icon className={cn(
                                     "w-6 h-6 transition-transform duration-300",
                                     isActive && "scale-110"
                                 )} />
+
+                                {isDebts && debtCount > 0 && (
+                                    <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-rose-500 text-white text-[10px] font-black flex items-center justify-center ring-2 ring-white dark:ring-slate-900 shadow-sm animate-in zoom-in">
+                                        {debtCount > 99 ? '99+' : debtCount}
+                                    </div>
+                                )}
                             </div>
                             <span className={cn(
                                 "text-[10px] font-bold tracking-tight transition-all duration-300",
@@ -46,7 +55,7 @@ export function BottomNav() {
                             )}>
                                 {item.name}
                             </span>
-                            {isActive && (
+                            {isActive && !isDebts && (
                                 <div className="absolute -top-1 w-1 h-1 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary),0.6)]" />
                             )}
                         </Link>

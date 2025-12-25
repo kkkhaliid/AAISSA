@@ -60,12 +60,18 @@ export function KPICard({ title, value, icon, trend, color, isCurrency }: any) {
             indicator: "bg-slate-500",
             glow: "bg-slate-500/5"
         },
+        dark: {
+            bg: "bg-slate-900 text-white",
+            iconBg: "bg-slate-800 text-white shadow-lg ring-1 ring-white/10",
+            indicator: "bg-white",
+            glow: "bg-white/5"
+        },
     };
 
     const config = variants[color as keyof typeof variants] || variants.indigo;
 
     return (
-        <div className="group relative glass dark:glass-dark p-5 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-premium overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border-0 ring-1 ring-white/20 dark:ring-white/5 active:scale-[0.98]">
+        <div className={cn("group relative glass dark:glass-dark p-5 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-premium overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border-0 ring-1 ring-white/20 dark:ring-white/5 active:scale-[0.98]", config.bg)}>
             {/* Background Glow */}
             <div className={cn("absolute -top-12 -right-12 w-32 md:w-40 h-32 md:h-40 rounded-full blur-3xl group-hover:opacity-40 transition-opacity duration-700", config.glow)} />
 
