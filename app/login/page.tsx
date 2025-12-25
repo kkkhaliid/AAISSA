@@ -4,7 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Smartphone, Mail, Lock, ArrowLeft, Sparkles } from "lucide-react";
 
-export default function LoginPage({ searchParams }: { searchParams: { error?: string } }) {
+export default async function LoginPage(props: {
+    searchParams: Promise<{ error?: string }>
+}) {
+    const searchParams = await props.searchParams;
+
     return (
         <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-slate-50 dark:bg-slate-950" dir="rtl">
             {/* Background Pattern */}
