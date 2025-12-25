@@ -65,27 +65,27 @@ export function KPICard({ title, value, icon, trend, color, isCurrency }: any) {
     const config = variants[color as keyof typeof variants] || variants.indigo;
 
     return (
-        <div className="group relative glass dark:glass-dark p-8 rounded-[2.5rem] shadow-premium overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border-0 ring-1 ring-white/20 dark:ring-white/5 active:scale-[0.98]">
+        <div className="group relative glass dark:glass-dark p-5 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-premium overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border-0 ring-1 ring-white/20 dark:ring-white/5 active:scale-[0.98]">
             {/* Background Glow */}
-            <div className={cn("absolute -top-12 -right-12 w-40 h-40 rounded-full blur-3xl group-hover:opacity-40 transition-opacity duration-700", config.glow)} />
+            <div className={cn("absolute -top-12 -right-12 w-32 md:w-40 h-32 md:h-40 rounded-full blur-3xl group-hover:opacity-40 transition-opacity duration-700", config.glow)} />
 
             <div className="relative z-10">
-                <div className="flex items-center justify-between mb-8">
-                    <div className={cn("w-16 h-16 rounded-2xl flex items-center justify-center shadow-xl transition-all duration-500 group-hover:scale-110", config.iconBg)}>
-                        <Icon className="w-8 h-8" />
+                <div className="flex items-center justify-between mb-4 md:mb-8">
+                    <div className={cn("w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center shadow-xl transition-all duration-500 group-hover:scale-110", config.iconBg)}>
+                        <Icon className="w-6 h-6 md:w-8 md:h-8" />
                     </div>
                     <div className="text-right">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-1">{title}</p>
-                        <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums leading-none">
+                        <p className="text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest md:tracking-[0.3em] mb-1">{title}</p>
+                        <h3 className="text-xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums leading-none">
                             {isCurrency ? value.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : value}
-                            {isCurrency && <span className="text-xs font-bold text-slate-400 ml-1.5 opacity-60">DH</span>}
+                            {isCurrency && <span className="text-[10px] md:text-xs font-bold text-slate-400 ml-1 opacity-60">DH</span>}
                         </h3>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2.5 px-0.5">
-                    <div className={cn("w-2 h-2 rounded-full animate-pulse shadow-[0_0_8px] shadow-current transition-all", config.indicator)} />
-                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{trend}</span>
+                <div className="flex items-center gap-2 px-0.5">
+                    <div className={cn("w-1.5 h-1.5 md:w-2 md:h-2 rounded-full animate-pulse shadow-[0_0_8px] shadow-current transition-all", config.indicator)} />
+                    <span className="text-[8px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest">{trend}</span>
                 </div>
             </div>
 
@@ -99,17 +99,17 @@ export function KPICard({ title, value, icon, trend, color, isCurrency }: any) {
 
 export function KPICardSkeleton() {
     return (
-        <div className="glass dark:glass-dark p-8 rounded-[2.5rem] shadow-premium h-[164px] animate-pulse">
-            <div className="flex items-center justify-between mb-8">
-                <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800" />
+        <div className="glass dark:glass-dark p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-premium h-[140px] md:h-[164px] animate-pulse">
+            <div className="flex items-center justify-between mb-6 md:mb-8">
+                <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl md:bg-slate-100 dark:bg-slate-800" />
                 <div className="flex flex-col items-end gap-2">
-                    <div className="w-20 h-2 bg-slate-100 dark:bg-slate-800 rounded" />
-                    <div className="w-32 h-6 bg-slate-100 dark:bg-slate-800 rounded" />
+                    <div className="w-16 md:w-20 h-2 bg-slate-100 dark:bg-slate-800 rounded" />
+                    <div className="w-24 md:w-32 h-5 md:h-6 bg-slate-100 dark:bg-slate-800 rounded" />
                 </div>
             </div>
             <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-slate-100 dark:bg-slate-800" />
-                <div className="w-24 h-2 bg-slate-100 dark:bg-slate-800 rounded" />
+                <div className="w-1.5 h-1.5 rounded-full bg-slate-100 dark:bg-slate-800" />
+                <div className="w-20 md:w-24 h-2 bg-slate-100 dark:bg-slate-800 rounded" />
             </div>
         </div>
     );
@@ -126,15 +126,15 @@ export function QuickAction({ href, title, subtitle, icon, color }: any) {
     return (
         <Link
             href={href}
-            className="group relative flex flex-col items-center text-center gap-6 p-10 glass dark:glass-dark rounded-[3rem] shadow-premium hover:shadow-3xl hover:-translate-y-2 transition-all duration-500 border-0 ring-1 ring-white/20 dark:ring-white/5 overflow-hidden"
+            className="group relative flex flex-col items-center text-center gap-3 md:gap-6 p-5 md:p-10 glass dark:glass-dark rounded-[1.5rem] md:rounded-[3rem] shadow-premium hover:shadow-3xl hover:-translate-y-2 transition-all duration-500 border-0 ring-1 ring-white/20 dark:ring-white/5 overflow-hidden active:scale-[0.98]"
         >
             <div className="absolute inset-x-0 top-0 h-full w-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 z-10" />
-            <div className={cn("w-20 h-20 rounded-[1.8rem] flex items-center justify-center transition-all duration-500 shadow-2xl group-hover:scale-110 group-hover:-rotate-3 relative z-20", colorClasses[color as keyof typeof colorClasses])}>
-                <Icon className="w-10 h-10" />
+            <div className={cn("w-12 h-12 md:w-20 md:h-20 rounded-xl md:rounded-[1.8rem] flex items-center justify-center transition-all duration-500 shadow-2xl group-hover:scale-110 group-hover:-rotate-3 relative z-20", colorClasses[color as keyof typeof colorClasses])}>
+                <Icon className="w-6 h-6 md:w-10 md:h-10" />
             </div>
             <div className="relative z-20">
-                <h4 className="font-black text-xl text-slate-900 dark:text-white group-hover:text-primary transition-colors tracking-tight">{title}</h4>
-                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-2 opacity-80">{subtitle}</p>
+                <h4 className="font-black text-base md:text-xl text-slate-900 dark:text-white group-hover:text-primary transition-colors tracking-tight">{title}</h4>
+                <p className="text-[8px] md:text-[10px] text-slate-500 font-bold uppercase tracking-widest md:tracking-[0.2em] mt-1 md:mt-2 opacity-80">{subtitle}</p>
             </div>
         </Link>
     );

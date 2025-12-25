@@ -20,14 +20,7 @@ export default async function ProductsPage() {
         }));
 
         return (
-            <div className="space-y-6 max-w-7xl mx-auto" dir="rtl">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900">إدارة المخزون</h1>
-                    <p className="text-muted-foreground mt-1">إدارة المخزون والأسعار وتفاصيل المنتجات</p>
-                </div>
-
-                <ProductsManager products={safeProducts as any[]} stores={storesResult.data || []} />
-            </div>
+            <ProductsManager products={safeProducts as any[]} stores={storesResult.data || []} />
         );
     } catch (error) {
         console.error("Products page error:", error);

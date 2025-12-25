@@ -9,22 +9,22 @@ import { PerformanceChart, PerformanceChartSkeleton, ActivitySidebar, ActivitySi
 
 export default async function AdminDashboard() {
     return (
-        <div className="space-y-10 max-w-7xl mx-auto pb-12" dir="rtl">
+        <div className="space-y-8 md:space-y-10 max-w-7xl mx-auto pb-12" dir="rtl">
             {/* Header - Instant */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="flex flex-col items-center md:items-end justify-between gap-6 px-4 md:px-0 text-center md:text-right">
                 <div>
-                    <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white">
+                    <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
                         لوحة التحكم
                     </h1>
-                    <p className="text-slate-500 font-medium mt-2 text-lg">نظرة عامة على أداء متجرك اليوم</p>
+                    <p className="text-slate-500 font-medium mt-2 text-sm md:text-lg">نظرة عامة على أداء متجرك اليوم</p>
                 </div>
                 <div className="flex items-center gap-3 bg-white dark:bg-slate-800 p-2 rounded-2xl shadow-premium border border-slate-100 dark:border-white/5">
                     <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
                         <Calendar className="w-5 h-5" />
                     </div>
                     <div className="px-2">
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">اليوم</p>
-                        <p className="text-sm font-black text-slate-900 dark:text-white">
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-none">اليوم</p>
+                        <p className="text-xs md:text-sm font-black text-slate-900 dark:text-white mt-1">
                             {new Date().toLocaleDateString('ar-MA', { weekday: 'long', day: 'numeric', month: 'long' })}
                         </p>
                     </div>
@@ -86,7 +86,7 @@ async function KPICardsData() {
     const totalProfitToday = salesResult.data?.reduce((sum, s) => sum + (s.profit || 0), 0) || 0;
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 px-4 md:px-0">
             <KPICard title="مبيعات اليوم" value={totalSalesToday} icon="DollarSign" trend="إجمالي المحصلة" color="indigo" isCurrency />
             <KPICard title="صافي الأرباح" value={totalProfitToday} icon="TrendingUp" trend="أرباح اليوم" color="emerald" isCurrency />
             <KPICard title="نواقص المخزون" value={lowStockResult.count || 0} icon="AlertTriangle" trend="تحتاج لإعادة ملء" color={lowStockResult.count && lowStockResult.count > 0 ? "rose" : "slate"} />

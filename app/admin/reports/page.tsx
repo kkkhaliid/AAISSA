@@ -92,33 +92,33 @@ export default async function ReportsPage() {
         .slice(0, 5);
 
     return (
-        <div className="space-y-12 max-w-7xl mx-auto pb-12" dir="rtl">
+        <div className="space-y-8 md:space-y-12 max-w-7xl mx-auto px-4 md:px-0 pb-20 md:pb-0" dir="rtl">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="flex flex-col items-center md:items-center justify-between gap-6 text-center md:text-right">
                 <div>
-                    <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white">تحليلات المبيعات</h1>
-                    <p className="text-slate-500 font-medium mt-2">نظرة شاملة على أداء متجرك ومعدل النمو</p>
+                    <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">تحليلات المبيعات</h1>
+                    <p className="text-sm md:text-base text-slate-500 font-medium mt-2">نظرة شاملة على أداء متجرك ومعدل النمو</p>
                 </div>
-                <div className="flex items-center gap-3 bg-white/50 dark:bg-slate-800/50 glass p-2 rounded-[1.5rem] shadow-sm">
-                    <div className="bg-primary p-3 rounded-xl text-white shadow-lg shadow-primary/30">
-                        <Calendar className="w-5 h-5" />
+                <div className="flex items-center gap-3 bg-white/50 dark:bg-slate-800/50 glass p-2 md:p-2.5 rounded-[1.5rem] md:rounded-[2rem] shadow-sm">
+                    <div className="bg-primary p-2 md:p-3 rounded-xl text-white shadow-lg shadow-primary/30">
+                        <Calendar className="w-4 h-4 md:w-5 md:h-5" />
                     </div>
                     <div className="pl-4">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">الفترة الحالية</p>
-                        <p className="text-sm font-black text-slate-900 dark:text-white mt-1">عام 2024</p>
+                        <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">الفترة الحالية</p>
+                        <p className="text-xs md:text-sm font-black text-slate-900 dark:text-white mt-1">عام 2024</p>
                     </div>
                 </div>
             </div>
 
             {/* KPI Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
                 <ModernMetricCard
                     title="إجمالي الإيرادات"
                     value={totalRevenue}
                     icon={DollarSign}
                     trend="+12.5%"
                     isPositive={true}
-                    color="primary"
+                    color="indigo"
                 />
                 <ModernMetricCard
                     title="إجمالي الأرباح"
@@ -134,7 +134,7 @@ export default async function ReportsPage() {
                     icon={ShoppingBag}
                     trend="-2.4%"
                     isPositive={false}
-                    color="indigo"
+                    color="rose"
                 />
                 <ModernMetricCard
                     title="العمليات"
@@ -149,86 +149,89 @@ export default async function ReportsPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Store Breakdown */}
-                <Card className="lg:col-span-1 rounded-[2.5rem] border-0 glass dark:glass-dark shadow-premium overflow-hidden">
-                    <CardHeader className="p-8 border-b border-slate-100 dark:border-white/5 bg-slate-50/50">
-                        <CardTitle className="text-xl font-black flex items-center gap-4 text-slate-900 dark:text-white">
-                            <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
-                                <StoreIcon className="w-6 h-6" />
+                <Card className="lg:col-span-1 rounded-[2rem] md:rounded-[2.5rem] border-0 glass dark:glass-dark shadow-premium overflow-hidden">
+                    <CardHeader className="p-6 md:p-8 border-b border-slate-100 dark:border-white/5 bg-slate-50/50">
+                        <CardTitle className="text-base md:text-xl font-black flex items-center gap-4 text-slate-900 dark:text-white">
+                            <div className="p-2 md:p-2.5 rounded-xl bg-primary/10 text-primary">
+                                <StoreIcon className="w-5 h-5 md:w-6 md:h-6" />
                             </div>
                             الأداء حسب المتجر
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="p-0">
-                        <div className="overflow-x-auto">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow className="border-slate-100 dark:border-white/5 hover:bg-transparent h-16">
-                                        <TableHead className="text-right font-black text-slate-400 uppercase tracking-widest text-[10px] pr-8">المتجر</TableHead>
-                                        <TableHead className="text-right font-black text-slate-400 uppercase tracking-widest text-[10px]">المبيعات</TableHead>
-                                        <TableHead className="text-left font-black text-emerald-500 uppercase tracking-widest text-[10px] pl-8">الأرباح</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {Array.from(storeStats.entries()).map(([name, stats]) => (
-                                        <TableRow key={name} className="border-slate-100 dark:border-white/5 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 h-20 transition-colors">
-                                            <TableCell className="font-black text-slate-900 dark:text-white pr-8 text-base">{name}</TableCell>
-                                            <TableCell className="font-bold text-slate-600 dark:text-slate-400 font-mono italic">{stats.revenue.toFixed(0)} DH</TableCell>
-                                            <TableCell className="text-left font-black text-emerald-500 pl-8 tracking-tighter text-lg">+{stats.profit.toFixed(0)} DH</TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                    <CardContent className="p-4 md:p-0">
+                        <div className="space-y-3 md:space-y-0">
+                            {/* Desktop Header */}
+                            <div className="hidden md:grid grid-cols-3 px-8 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100 dark:border-white/5">
+                                <div>المتجر</div>
+                                <div className="text-center">المبيعات</div>
+                                <div className="text-left">الأرباح</div>
+                            </div>
+
+                            {Array.from(storeStats.entries()).map(([name, stats]) => (
+                                <div key={name} className="flex flex-col md:grid md:grid-cols-3 gap-2 md:gap-4 p-5 md:p-0 md:px-8 md:h-20 items-stretch md:items-center bg-white dark:bg-slate-900 md:bg-transparent rounded-2xl md:rounded-none ring-1 ring-black/5 md:ring-0 shadow-sm md:shadow-none transition-colors md:border-b md:border-slate-100 md:dark:border-white/5 last:border-0">
+                                    <div className="font-black text-slate-900 dark:text-white text-base">{name}</div>
+                                    <div className="flex justify-between md:justify-center items-center">
+                                        <span className="md:hidden text-[9px] font-black text-slate-400 uppercase tracking-widest">المبيعات:</span>
+                                        <span className="font-bold text-slate-600 dark:text-slate-400 font-mono italic">{stats.revenue.toFixed(0)} DH</span>
+                                    </div>
+                                    <div className="flex justify-between md:justify-end items-center border-t md:border-t-0 border-slate-50 dark:border-white/5 pt-2 md:pt-0">
+                                        <span className="md:hidden text-[9px] font-black text-slate-400 uppercase tracking-widest">الأرباح:</span>
+                                        <span className="text-left font-black text-emerald-500 tracking-tighter text-lg">+{stats.profit.toFixed(0)} DH</span>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </CardContent>
                 </Card>
 
                 {/* Top Products */}
-                <Card className="lg:col-span-2 rounded-[2.5rem] border-0 glass dark:glass-dark shadow-premium overflow-hidden">
-                    <CardHeader className="p-8 border-b border-slate-100 dark:border-white/5 bg-slate-50/50">
-                        <CardTitle className="text-xl font-black flex items-center gap-4 text-slate-900 dark:text-white">
-                            <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-500">
-                                <BarChart3 className="w-6 h-6" />
+                <Card className="lg:col-span-2 rounded-[2rem] md:rounded-[2.5rem] border-0 glass dark:glass-dark shadow-premium overflow-hidden">
+                    <CardHeader className="p-6 md:p-8 border-b border-slate-100 dark:border-white/5 bg-slate-50/50">
+                        <CardTitle className="text-base md:text-xl font-black flex items-center gap-4 text-slate-900 dark:text-white">
+                            <div className="p-2 md:p-2.5 rounded-xl bg-indigo-500/10 text-indigo-500">
+                                <BarChart3 className="w-5 h-5 md:w-6 md:h-6" />
                             </div>
                             أكثر المنتجات مبيعاً
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="p-0">
-                        <div className="overflow-x-auto">
-                            <Table className="min-w-[600px] lg:min-w-full">
-                                <TableHeader>
-                                    <TableRow className="border-slate-100 dark:border-white/5 hover:bg-transparent h-16">
-                                        <TableHead className="text-right font-black text-slate-400 uppercase tracking-widest text-[10px] pr-8">المنتج</TableHead>
-                                        <TableHead className="text-center font-black text-slate-400 uppercase tracking-widest text-[10px]">الكمية</TableHead>
-                                        <TableHead className="text-right font-black text-slate-400 uppercase tracking-widest text-[10px]">الإيرادات</TableHead>
-                                        <TableHead className="text-left font-black text-emerald-500 uppercase tracking-widest text-[10px] pl-8">صافي الربح</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {topProducts.map((p, i) => (
-                                        <TableRow key={i} className="border-slate-100 dark:border-white/5 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 h-24 transition-colors">
-                                            <TableCell className="pr-8">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="w-14 h-14 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-white/5 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
-                                                        {p.image_url ? (
-                                                            <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" />
-                                                        ) : (
-                                                            <PackageIcon className="w-6 h-6 text-slate-200" />
-                                                        )}
-                                                    </div>
-                                                    <span className="font-black text-slate-900 dark:text-white text-lg tracking-tight">{p.name}</span>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="text-center">
-                                                <span className="bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-black">
-                                                    {p.quantity} قطعة
-                                                </span>
-                                            </TableCell>
-                                            <TableCell className="font-bold text-slate-500 font-mono italic text-sm">{p.revenue.toFixed(2)} DH</TableCell>
-                                            <TableCell className="text-left font-black text-emerald-500 pl-8 tracking-tighter text-xl">+{p.profit.toFixed(0)} DH</TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                    <CardContent className="p-4 md:p-0">
+                        <div className="space-y-4 md:space-y-0">
+                            {/* Desktop Header */}
+                            <div className="hidden md:grid grid-cols-4 px-10 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100 dark:border-white/5">
+                                <div>المنتج</div>
+                                <div className="text-center">الكمية</div>
+                                <div className="text-center">الإيرادات</div>
+                                <div className="text-left">الربح</div>
+                            </div>
+
+                            {topProducts.map((p, i) => (
+                                <div key={i} className="flex flex-col md:grid md:grid-cols-4 gap-4 md:gap-4 p-5 md:p-4 md:px-10 items-stretch md:items-center bg-white dark:bg-slate-900 md:bg-transparent rounded-2xl md:rounded-none ring-1 ring-black/5 md:ring-0 shadow-sm md:shadow-none hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors md:border-b md:border-slate-100 md:dark:border-white/5 last:border-0 h-auto md:h-24">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-white/5 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+                                            {p.image_url ? (
+                                                <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <PackageIcon className="w-5 h-5 md:w-6 md:h-6 text-slate-200" />
+                                            )}
+                                        </div>
+                                        <span className="font-black text-slate-900 dark:text-white text-base md:text-lg tracking-tight">{p.name}</span>
+                                    </div>
+                                    <div className="flex justify-between md:justify-center items-center">
+                                        <span className="md:hidden text-[9px] font-black text-slate-400 uppercase tracking-widest">الكمية:</span>
+                                        <span className="bg-primary/10 text-primary px-3 md:px-4 py-1 rounded-full text-[10px] md:text-xs font-black">
+                                            {p.quantity} قطعة
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between md:justify-center items-center">
+                                        <span className="md:hidden text-[9px] font-black text-slate-400 uppercase tracking-widest">الإيرادات:</span>
+                                        <span className="font-bold text-slate-500 font-mono italic text-xs md:text-sm">{p.revenue.toFixed(0)} DH</span>
+                                    </div>
+                                    <div className="flex justify-between md:justify-end items-center border-t md:border-t-0 border-slate-50 dark:border-white/5 pt-2 md:pt-0">
+                                        <span className="md:hidden text-[9px] font-black text-slate-400 uppercase tracking-widest">الربح:</span>
+                                        <span className="text-left font-black text-emerald-500 md:pl-0 tracking-tighter text-lg md:text-xl">+{p.profit.toFixed(0)} DH</span>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </CardContent>
                 </Card>
@@ -238,35 +241,54 @@ export default async function ReportsPage() {
 }
 
 function ModernMetricCard({ title, value, icon: Icon, trend, isPositive, color, noCurrency }: any) {
-    const colorClasses: Record<string, string> = {
-        primary: "bg-primary/10 text-primary",
-        emerald: "bg-emerald-500/10 text-emerald-500",
-        indigo: "bg-indigo-500/10 text-indigo-500",
-        amber: "bg-amber-500/10 text-amber-500",
+    const variants = {
+        indigo: {
+            bg: "bg-indigo-500/10",
+            iconBg: "bg-indigo-500 text-white shadow-indigo-500/20",
+            glow: "bg-indigo-500/5"
+        },
+        emerald: {
+            bg: "bg-emerald-500/10",
+            iconBg: "bg-emerald-500 text-white shadow-emerald-500/20",
+            glow: "bg-emerald-500/5"
+        },
+        rose: {
+            bg: "bg-rose-500/10",
+            iconBg: "bg-rose-500 text-white shadow-rose-500/20",
+            glow: "bg-rose-500/5"
+        },
+        amber: {
+            bg: "bg-amber-500/10",
+            iconBg: "bg-amber-500 text-white shadow-amber-500/20",
+            glow: "bg-amber-500/5"
+        },
     };
 
+    const config = variants[color as keyof typeof variants] || variants.indigo;
+
     return (
-        <Card className="rounded-[2.5rem] border-0 glass dark:glass-dark shadow-premium overflow-hidden group hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-            <CardContent className="p-8">
-                <div className="flex justify-between items-start">
-                    <div className={cn("p-4 rounded-2xl shadow-sm transition-transform group-hover:scale-110", colorClasses[color] || colorClasses.primary)}>
-                        <Icon className="w-8 h-8" />
+        <Card className="rounded-[2rem] md:rounded-[2.5rem] border-0 glass dark:glass-dark shadow-premium overflow-hidden group hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 relative">
+            <div className={cn("absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl group-hover:opacity-40 transition-opacity duration-700", config.glow)} />
+            <CardContent className="p-5 md:p-8 relative z-10">
+                <div className="flex justify-between items-start mb-4 md:mb-8">
+                    <div className={cn("p-2.5 md:p-4 rounded-xl md:rounded-2xl shadow-lg transition-transform group-hover:scale-110", config.iconBg)}>
+                        <Icon className="w-6 h-6 md:w-8 md:h-8" />
                     </div>
                     {trend && (
                         <div className={cn(
-                            "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black tracking-widest uppercase",
-                            isPositive ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"
+                            "flex items-center gap-1 px-2 py-1 rounded-xl text-[8px] md:text-[10px] font-black tracking-widest uppercase",
+                            isPositive ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400"
                         )}>
-                            {isPositive ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+                            {isPositive ? <ArrowUpRight className="w-2.5 h-2.5" /> : <ArrowDownRight className="w-2.5 h-2.5" />}
                             {trend}
                         </div>
                     )}
                 </div>
-                <div className="mt-8">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">{title}</p>
-                    <h3 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums">
+                <div>
+                    <p className="text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest md:tracking-[0.2em] mb-1 md:mb-2">{title}</p>
+                    <h3 className="text-xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tighter tabular-nums leading-none">
                         {typeof value === 'number' ? value.toFixed(0) : value}
-                        {!noCurrency && <span className="text-lg ml-1 font-bold text-slate-400">DH</span>}
+                        {!noCurrency && <span className="text-[10px] md:text-base ml-1 font-bold text-slate-400">DH</span>}
                     </h3>
                 </div>
             </CardContent>

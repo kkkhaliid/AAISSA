@@ -66,10 +66,10 @@ export function UsersManager({ initialUsers, stores }: { initialUsers: Profile[]
     return (
         <div className="space-y-10 max-w-7xl mx-auto" dir="rtl">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4 md:px-0">
-                <div>
+            <div className="flex flex-col items-center md:items-end justify-between gap-6 px-4 md:px-0 text-center md:text-right">
+                <div className="flex flex-col items-center md:items-end">
                     <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">إدارة الفريق</h1>
-                    <p className="text-slate-500 font-medium mt-2">تحكم في صلاحيات الوصول للموظفين والمسؤولين</p>
+                    <p className="text-slate-500 font-medium mt-2 text-sm md:text-base">تحكم في صلاحيات الوصول للموظفين والمسؤولين</p>
                 </div>
                 <UserDialog stores={stores} onSuccess={handleUserCreated} />
             </div>

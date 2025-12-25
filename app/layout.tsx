@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Outfit, Cairo } from "next/font/google";
 import "./globals.css";
 
@@ -12,11 +12,17 @@ const cairo = Cairo({
   subsets: ["arabic", "latin"],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: "#4f46e5",
+};
+
 export const metadata: Metadata = {
   title: "AissaPhone Cloud | نظام إدارة المبيعات",
   description: "المنصة المتكاملة لإدارة متاجر الهواتف، الديون، والمخزون بدقة واحترافية.",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
-  themeColor: "#4f46e5",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -26,6 +32,7 @@ export const metadata: Metadata = {
     telephone: false,
   },
 };
+
 
 export default function RootLayout({
   children,

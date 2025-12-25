@@ -49,12 +49,12 @@ export function StoresManager({ stores }: { stores: Store[] }) {
     return (
         <div className="space-y-10 max-w-7xl mx-auto" dir="rtl">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4 md:px-0">
-                <div>
+            <div className="flex flex-col items-center md:items-end justify-between gap-6 px-4 md:px-0 text-center md:text-right">
+                <div className="flex flex-col items-center md:items-end">
                     <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">إدارة المتاجر</h1>
-                    <p className="text-slate-500 font-medium mt-2">قم بإضافة وتعديل فروع متجرك</p>
+                    <p className="text-slate-500 font-medium mt-2 text-sm md:text-base">قم بإضافة وتعديل فروع متجرك</p>
                 </div>
-                <Button onClick={openAdd} className="gap-3 h-14 px-8 rounded-2xl gradient-primary shadow-xl shadow-indigo-200 dark:shadow-none font-black text-lg active:scale-95 transition-all text-white border-0">
+                <Button onClick={openAdd} className="w-full md:w-auto gap-3 h-14 px-8 rounded-2xl gradient-primary shadow-xl shadow-indigo-200 dark:shadow-none font-black text-lg active:scale-95 transition-all text-white border-0">
                     <Plus className="w-6 h-6" />
                     <span>إضافة متجر جديد</span>
                 </Button>

@@ -10,8 +10,9 @@ export default async function StoresPage() {
             .order("created_at", { ascending: false });
 
         if (error) {
-            console.error("Stores query error:", error);
+            console.error("Stores query error details:", JSON.stringify(error, null, 2));
         }
+
 
         return <StoresManager stores={stores || []} />;
     } catch (error) {

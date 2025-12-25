@@ -196,7 +196,7 @@ export function ProductDialog({ stores, product, open: externalOpen, onOpenChang
         <Dialog open={open} onOpenChange={setOpen}>
             {!isEdit && (
                 <DialogTrigger asChild>
-                    <Button className="gap-2 h-10 px-4 rounded-lg bg-primary hover:bg-primary/90 text-white font-medium shadow-sm active:scale-95 transition-all">
+                    <Button className="hidden md:inline-flex gap-2 h-10 px-4 rounded-lg bg-primary hover:bg-primary/90 text-white font-medium shadow-sm active:scale-95 transition-all">
                         <Plus className="w-4 h-4" />
                         <span>إضافة منتج</span>
                     </Button>
